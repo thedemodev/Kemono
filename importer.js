@@ -1,5 +1,5 @@
 const Datastore = require('nedb-promise');
-const db = new Datastore({filename: 'storage/posts.db'});
+const db = new Datastore({filename: `${process.env.DB_ROOT}/posts.db`});
 const cloudscraper = require('cloudscraper').defaults({onCaptcha: require('./captcha')()});
 const cd = require('content-disposition');
 const Promise = require('bluebird');
