@@ -16,9 +16,7 @@
     "nedb": "^1.8.0",
     "nedb-promise": "^2.0.1",
     "request": "^2.88.0",
-    "retry": "^0.12.0"
-  },
-  "devDependencies": {
+    "retry": "^0.12.0",
     "supervisor": "^0.12.0"
   }
 }
