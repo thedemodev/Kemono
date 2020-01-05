@@ -29,7 +29,6 @@ express()
   })
   .get('/api/recent', async(req, res) => {
     let recentPosts = await db.cfind({}).sort({ added_at: -1 }).skip(req.query.skip || 0).limit(req.query.limit || 25).exec();
-    res.setHeader('Cache-Control', 's-maxage=1, stale-while-revalidate');
     res.json(recentPosts);
   })
   .post('/api/import', async(req, res) => {
