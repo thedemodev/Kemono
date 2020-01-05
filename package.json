@@ -1,0 +1,24 @@
+{
+  "private": true,
+  "scripts": {
+    "start": "supervisor -i node_modules -n error server.js"
+  },
+  "dependencies": {
+    "@auth0/s3": "^1.0.0",
+    "bluebird": "^3.7.2",
+    "cloudscraper": "^4.5.0",
+    "compression": "^1.7.4",
+    "content-disposition": "^0.5.3",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "fs-extra": "^8.1.0",
+    "memory-cache": "^0.2.0",
+    "nedb": "^1.8.0",
+    "nedb-promise": "^2.0.1",
+    "request": "^2.88.0",
+    "retry": "^0.12.0"
+  },
+  "devDependencies": {
+    "supervisor": "^0.12.0"
+  }
+}

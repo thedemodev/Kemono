@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Importer</title>
+    <link rel="stylesheet" type="text/css" href="https://unpkg.com/normalize.css@8.0.1/normalize.css">
+    <link rel="stylesheet" type="text/css" href="/css/index.css">
+  </head>
+  <body>
+    <div class="main">
+      <div class="header">
+        <a href="/" class="link-reset header-item">[Home]</a>
+        <a href="/importer" class="link-reset header-item">[Importer]</a>
+        <a 
+          href="https://liberapay.com/kemono.party/" 
+          target="_blank"
+          class="link-reset header-item"
+        >
+          [Donate]
+        </a>
+      </div>
+      <div class="martha-view" id="martha-view">
+        <form 
+          class="importer-form"
+          action="/api/import"
+          enctype="application/x-www-form-urlencoded"
+          method="post"
+        >
+          <input 
+            type="text"
+            class="importer-input"
+            name="session_key"
+            placeholder="patreon session key"
+            autocomplete="off" 
+            autocorrect="off" 
+            autocapitalize="off" 
+            spellcheck="false"
+          >
+          <input type="submit" style="visibility: hidden; position: absolute;" />
+        </form>
+      </div>
+      <div class="footer">
+        <p>Learn how to get your session key.</p>
+        <p>Your session key is used to scrape your Patreon feed. After downloading missing posts, the key is immediately discarded and never stored.</p>
+        <p>Import reupload-sensitive creators at your own risk. You may want to wait a while between pledging and importing to avoid detection.</p>
+        <p>If you're having trouble with the importer or you have specific archival needs, 
+          <a href="mailto:admin@kemono.party?subject=Kemono" class="link-reset">contact me.</a>
+        </p>
+      </div>
+    </div>
+  </body>
+</html>
