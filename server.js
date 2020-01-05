@@ -1,6 +1,6 @@
 require('dotenv').config()
 const Datastore = require('nedb-promise');
-const db = new Datastore({filename: 'posts.db', autoload: true});
+const db = new Datastore({filename: 'storage/posts.db', autoload: true});
 const cloudscraper = require('cloudscraper').defaults({onCaptcha: require('./captcha')()});
 const bodyParser = require('body-parser');
 const cache = require('memory-cache');
