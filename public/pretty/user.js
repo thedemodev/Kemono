@@ -38,7 +38,7 @@ async function loadMorePosts(skip) {
       <a href="${post.embed.url} target="_blank">
         <div class="embed-view">
           <h3>${post.embed.subject}</h3>
-          <p>${post.embed.description}</p>
+          <p>${post.embed.description || ''}</p>
         </div>
       </a>
     `
@@ -63,7 +63,7 @@ async function main() {
   let pathname = window.location.pathname.split('/')
   const userData = await fetch(`/proxy/user/${pathname[2]}`);
   const user = await userData.json();
-  document.title = `${user.data.attributes.vanity} | martha`
+  document.title = `${user.data.attributes.vanity} | kemono`
   let marthaView = document.getElementById('martha-view');
   marthaView.innerHTML += `
     <div 
