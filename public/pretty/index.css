@@ -2,12 +2,16 @@ html {
   background: #1d1f21
 }
 
-h1, h2, h3 {
+h1, h2, h3, p {
   font-family: Helvetica;
+  line-height: 14px;
 }
 
-p {
-  line-height: 14px;
+.user-post-view h1, 
+.user-post-view h2, 
+.user-post-view h3, 
+.user-post-view p {
+  line-height: normal;
 }
 
 .main {
