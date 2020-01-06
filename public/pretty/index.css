@@ -2,8 +2,12 @@ html {
   background: #1d1f21
 }
 
-h1, h2, h3, p {
+h1, h2, h3 {
   font-family: Helvetica;
+}
+
+p {
+  line-height: 14px;
 }
 
 .main {
