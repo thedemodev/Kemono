@@ -15,7 +15,7 @@ async function loadMorePosts(skip){document.getElementById("load-more-button").o
           <p>Download ${post.post_file.name }</p>
         </a>
       `}if(Object.keys(post.embed).length!=0){embed=`
-      <a href="${post.embed.url } target="_blank">
+      <a href="${post.embed.url }" target="_blank">
         <div class="embed-view">
           <h3>${post.embed.subject }</h3>
           <p>${post.embed.description||''}</p>
