@@ -73,7 +73,7 @@ async function main() {
       <img class="user-header-avatar" src="${user.data.attributes.image_url}"></img>
       <div class="user-header-info">
         <div class="user-header-info-top">
-          <h1>${user.data.attributes.vanity}</h1>
+          <h1>${user.data.attributes.vanity || user.data.attributes.full_name}</h1>
           <a href="https://www.patreon.com/user?u=${user.data.id}" target="_blank" rel="noreferrer">
             <div class="user-header-info-patreon"></div>
           </a>

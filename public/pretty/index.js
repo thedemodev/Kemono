@@ -21,7 +21,7 @@ async function main() {
               <p><b>${post.title}</b></p>
             </a>
             <a class="link-reset" href="/user/${userQueue[post.user].data.id}">
-              <p>${userQueue[post.user].data.attributes.vanity}</p>
+              <p>${userQueue[post.user].data.attributes.vanity || userQueue[post.user].data.attributes.full_name}</p>
             </a>
           </div>
         </div>
