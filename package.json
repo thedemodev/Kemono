@@ -2,7 +2,7 @@
   "private": true,
   "scripts": {
     "dev": "supervisor -i node_modules -n error server.js",
-    "start": "pm2 start server.js"
+    "start": "forever start server.js"
   },
   "dependencies": {
     "@auth0/s3": "^1.0.0",
@@ -12,11 +12,11 @@
     "content-disposition": "^0.5.3",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
+    "forever": "^2.0.0",
     "fs-extra": "^8.1.0",
     "memory-cache": "^0.2.0",
     "nedb": "^1.8.0",
     "nedb-promise": "^2.0.1",
-    "pm2": "^4.2.1",
     "request": "^2.88.0",
     "retry": "^0.12.0"
   },
