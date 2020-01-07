@@ -7,6 +7,11 @@ h1, h2, h3, p {
   line-height: 14px;
 }
 
+.user-post-view img {
+  max-width: 100%;
+  border-radius: 10px;
+}
+
 .user-post-view h1, 
 .user-post-view h2, 
 .user-post-view h3, 
