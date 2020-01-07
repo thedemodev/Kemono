@@ -1,0 +1,21 @@
+name: CD
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Dokku deploy
+      uses: vitalyliber/dokku-github-action@master
+      env:
+        PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+        PUBLIC_KEY: ${{ secrets.PUBLIC_KEY }}
+        HOST: ${{ secrets.DOKKU_HOST }}
+        PROJECT: kemono
