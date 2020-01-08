@@ -33,7 +33,7 @@ async function loadMorePosts(skip){document.getElementById("load-more-button").o
       </div>
     `});marthaView.innerHTML+=`
     <button onClick="loadMorePosts(${skip+26})" id="load-more-button" class="load-more-button">Load More</a>
-  `}async function main(){let pathname=window.location.pathname.split('/');const userData=await fetch(`/proxy/user/${pathname[2]}`);const user=await userData.json();document.title=`${user.data.attributes.vanity } | kemono`;let marthaView=document.getElementById('martha-view');marthaView.innerHTML+=`
+  `}async function main(){let pathname=window.location.pathname.split('/');const userData=await fetch(`/proxy/user/${pathname[2]}`);const user=await userData.json();document.title=`${user.data.attributes.vanity||user.data.attributes.full_name } | kemono`;let marthaView=document.getElementById('martha-view');marthaView.innerHTML+=`
     <div 
       class="user-header-view" 
       style="background: url('${user.included[0].attributes.cover_photo_url }'); background-size: 100% auto; background-position: center;"

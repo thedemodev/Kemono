@@ -63,7 +63,7 @@ async function main() {
   let pathname = window.location.pathname.split('/')
   const userData = await fetch(`/proxy/user/${pathname[2]}`);
   const user = await userData.json();
-  document.title = `${user.data.attributes.vanity} | kemono`
+  document.title = `${user.data.attributes.vanity || user.data.attributes.full_name} | kemono`
   let marthaView = document.getElementById('martha-view');
   marthaView.innerHTML += `
     <div 
