@@ -52,7 +52,7 @@ async function scraper(key, uri = 'https://api.patreon.com/stream?json-api-versi
       s3.upload({
         Bucket: 'kemono-cdn',
         Body: fs.readFileSync(`${tmpdir}/kemono/${fileKey}/${attr.post_file.name}`),
-        CacheControl: 'max-age=2592000, public',
+        CacheControl: 's-maxage=2592000',
         ContentType: mime.getType(`${tmpdir}/kemono/${fileKey}/${attr.post_file.name}`),
         Key: `${fileKey}/${attr.post_file.name}`,
       }, () => {});
@@ -78,7 +78,7 @@ async function scraper(key, uri = 'https://api.patreon.com/stream?json-api-versi
         s3.upload({
           Bucket: 'kemono-cdn',
           Body: fs.readFileSync(`${tmpdir}/kemono/${attachmentsKey}/${info.parameters.filename}`),
-          CacheControl: 'max-age=2592000, public',
+          CacheControl: 's-maxage=2592000',
           ContentType: mime.getType(`${tmpdir}/kemono/${attachmentsKey}/${info.parameters.filename}`),
           Key: `${attachmentsKey}/${info.parameters.filename}`,
         }, () => {});
