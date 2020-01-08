@@ -6,13 +6,12 @@ const Promise = require('bluebird');
 const request = require('request-promise');
 const os = require('os');
 const fs = require('fs-extra');
-const s3 = require('@auth0/s3');
-var client = s3.createClient({
-  s3Options: {
-    accessKeyId: process.env.S3_ACCESS_KEY_ID,
-    secretAccessKey: process.env.S3_ACCESS_KEY,
-    region: process.env.S3_REGION
-  },
+const mime = require('mime');
+const AWS = require('aws-sdk');
+const s3 = new AWS.S3({
+  accessKeyId: process.env.S3_ACCESS_KEY_ID,
+  secretAccessKey: process.env.S3_ACCESS_KEY,
+  region: process.env.S3_REGION
 });
 let tmpdir = os.tmpdir()
 async function scraper(key, uri = 'https://api.patreon.com/stream?json-api-version=1.0') {
@@ -50,14 +49,13 @@ async function scraper(key, uri = 'https://api.patreon.com/stream?json-api-versi
     if (attr.post_file) {
       let fileData = await request.get({url: attr.post_file.url, encoding: 'binary'})
       await fs.outputFile(`${tmpdir}/kemono/${fileKey}/${attr.post_file.name}`, fileData, 'binary')
-      client.uploadFile({
-        localFile: `${tmpdir}/kemono/${fileKey}/${attr.post_file.name}`,
-        s3Params: {
-          Bucket: 'kemono-cdn',
-          Key: `${fileKey}/${attr.post_file.name}`,
-          CacheControl: 'max-age=2592000, public'
-        }
-      })
+      s3.upload({
+        Bucket: 'kemono-cdn',
+        Body: fs.readFileSync(`${tmpdir}/kemono/${fileKey}/${attr.post_file.name}`),
+        CacheControl: 'max-age=2592000, public',
+        ContentType: mime.getType(`${tmpdir}/kemono/${fileKey}/${attr.post_file.name}`),
+        Key: `${fileKey}/${attr.post_file.name}`,
+      }, () => {});
       postDb.post_file['name'] = attr.post_file.name
       postDb.post_file['path'] = `${cdn}/${fileKey}/${attr.post_file.name}`
     }
@@ -77,14 +75,13 @@ async function scraper(key, uri = 'https://api.patreon.com/stream?json-api-versi
         let attachmentData = await cloudscraper.get(`https://www.patreon.com/file?h=${post.id}&i=${attachment.id}`, attachmentOptions);
         let info = cd.parse(attachmentData.headers['content-disposition']);
         await fs.outputFile(`${tmpdir}/kemono/${attachmentsKey}/${info.parameters.filename}`, attachmentData.body, 'binary')
-        client.uploadFile({
-          localFile: `${tmpdir}/kemono/${attachmentsKey}/${info.parameters.filename}`,
-          s3Params: {
-            Bucket: 'kemono-cdn',
-            Key: `${attachmentsKey}/${info.parameters.filename}`,
-            CacheControl: 'max-age=2592000, public'
-          }
-        })
+        s3.upload({
+          Bucket: 'kemono-cdn',
+          Body: fs.readFileSync(`${tmpdir}/kemono/${attachmentsKey}/${info.parameters.filename}`),
+          CacheControl: 'max-age=2592000, public',
+          ContentType: mime.getType(`${tmpdir}/kemono/${attachmentsKey}/${info.parameters.filename}`),
+          Key: `${attachmentsKey}/${info.parameters.filename}`,
+        }, () => {});
         postDb.attachments.push({
           id: attachment.id, 
           name: info.parameters.filename,
