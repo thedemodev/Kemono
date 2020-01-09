@@ -16,10 +16,10 @@ express()
     extensions: ['html', 'htm'],
     setHeaders: (res) => res.setHeader('Cache-Control', 's-maxage=1, stale-while-revalidate')
   }))
-  .use(express.static(`${process.env.DB_ROOT}/files`, {
+  .use(express.static('/files', `${process.env.DB_ROOT}/files`, {
     setHeaders: (res) => res.setHeader('Cache-Control', 's-maxage=2592000')
   }))
-  .use(express.static(`${process.env.DB_ROOT}/attachments`, {
+  .use(express.static('/attachments', `${process.env.DB_ROOT}/attachments`, {
     setHeaders: (res) => res.setHeader('Cache-Control', 's-maxage=2592000')
   }))
   .get('/user/:id', (req, res) => {
