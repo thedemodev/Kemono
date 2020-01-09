@@ -6,7 +6,7 @@ const cache = require('memory-cache');
 const express = require('express');
 const compression = require('compression');
 const importer = require('./importer');
-db.ensureIndex({fieldName: 'user'});
+posts.ensureIndex({fieldName: 'user'});
 express()
   .use(compression())
   .use(bodyParser.urlencoded({ extended: false }))
