@@ -12,6 +12,10 @@ express()
   .use(compression())
   .use(bodyParser.urlencoded({ extended: false }))
   .use(bodyParser.json())
+  .use(express.static('public', {
+    extensions: ['html', 'htm'],
+    setHeaders: (res) => res.setHeader('Cache-Control', 's-maxage=1, stale-while-revalidate')
+  }))
   .use(express.static(`${process.env.DB_ROOT}/files`, {
     setHeaders: (res) => res.setHeader('Cache-Control', 's-maxage=2592000')
   }))
