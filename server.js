@@ -12,11 +12,11 @@ express()
   .use(compression())
   .use(bodyParser.urlencoded({ extended: false }))
   .use(bodyParser.json())
-  .use(express.static('public', {
-    extensions: ['html', 'htm'],
-    setHeaders: (res) => {
-      res.setHeader('Cache-Control', 's-maxage=1, stale-while-revalidate')
-    }
+  .use(express.static(`${process.env.DB_ROOT}/files`, {
+    setHeaders: (res) => res.setHeader('Cache-Control', 's-maxage=2592000')
+  }))
+  .use(express.static(`${process.env.DB_ROOT}/attachments`, {
+    setHeaders: (res) => res.setHeader('Cache-Control', 's-maxage=2592000')
   }))
   .get('/user/:id', (req, res) => {
     res.setHeader('Cache-Control', 's-maxage=1, stale-while-revalidate');
@@ -35,16 +35,17 @@ express()
     res.json(recentPosts);
   })
   .post('/api/import', async(req, res) => {
-    if (!req.body.session_key) res.sendStatus(400)
+    if (!req.body.session_key) res.sendStatus(401);
     importer(req.body.session_key)
     res.redirect('/importer/ok')
   })
   .get('/proxy/user/:id', async(req, res) => {
     let api = 'https://www.patreon.com/api/user';
     if (!cache.get(req.params.id)) {
+      let options = cloudscraper.defaultParams;
+      options['json'] = true;
       let user = await cloudscraper.get(`${api}/${req.params.id}`).catch(() => res.sendStatus(404));
-      let userJson = await JSON.parse(user);
-      await cache.put(req.params.id, userJson, 600000);
+      await cache.put(req.params.id, user, 600000);
     }
     res.setHeader('Cache-Control', 'max-age=600, public');
     res.json(cache.get(req.params.id));

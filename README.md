@@ -1,5 +1,5 @@
 # Kemono
-Kemono is an open-source reimplementation of [yiff.party](https://yiff.party/) built for speed and reliability. Scraping is performed asynchronously, and proxy requests to Patreon are all cached in memory. S3 is used for storage to save costs and easily scale.
+Kemono is an open-source reimplementation of [yiff.party](https://yiff.party/) built for speed and reliability. Scraping is performed asynchronously, and proxy requests to Patreon are all cached in memory.
 ### Running
 The source code for Kemono is provided as-is, and I have no plans to make a customizable self-host version. You can obviously still do it, but your mileage may vary and you will need to change things in the source.
 
