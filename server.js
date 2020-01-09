@@ -40,14 +40,11 @@ express()
     res.redirect('/importer/ok')
   })
   .get('/proxy/user/:id', async(req, res) => {
+    let options = cloudscraper.defaultParams;
+    options['json'] = true;
     let api = 'https://www.patreon.com/api/user';
-    if (!cache.get(req.params.id)) {
-      let options = cloudscraper.defaultParams;
-      options['json'] = true;
-      let user = await cloudscraper.get(`${api}/${req.params.id}`, options).catch(() => res.sendStatus(404));
-      await cache.put(req.params.id, user, 600000);
-    }
-    res.setHeader('Cache-Control', 'max-age=600, public');
-    res.json(cache.get(req.params.id));
+    let user = await cloudscraper.get(`${api}/${req.params.id}`, options).catch(() => res.sendStatus(404));
+    res.setHeader('Cache-Control', 's-maxage=5, stale-while-revalidate');
+    res.json(user);
   })
   .listen(process.env.PORT || 8080)
