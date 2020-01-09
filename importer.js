@@ -1,5 +1,4 @@
-const Datastore = require('nedb-promise');
-const db = new Datastore({filename: `${process.env.DB_ROOT}/posts.db`});
+const { posts } = require('./db');
 const cloudscraper = require('cloudscraper').defaults({onCaptcha: require('./captcha')()});
 const cd = require('content-disposition');
 const Promise = require('bluebird');
@@ -33,8 +32,8 @@ async function scraper(key, uri = 'https://api.patreon.com/stream?json-api-versi
       attachments: []
     };
 
-    await db.loadDatabase();
-    let postExists = await db.findOne({id: post.id});
+    posts.loadDatabase();
+    let postExists = await posts.findOne({id: post.id});
     if (postExists) return;
 
     if (attr.post_file) {
@@ -65,7 +64,7 @@ async function scraper(key, uri = 'https://api.patreon.com/stream?json-api-versi
           path: `${cdn}/${attachmentsKey}/${info.parameters.filename}`
         });
       })
-      .then(() => db.insert(postDb))
+      .then(() => posts.insert(postDb))
   })
   
   if (patreon.body.links.next) {

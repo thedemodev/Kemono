@@ -1,6 +1,5 @@
 require('dotenv').config()
-const Datastore = require('nedb-promise');
-const db = new Datastore({filename: `${process.env.DB_ROOT}/posts.db`});
+const { posts } = require('./db');
 const cloudscraper = require('cloudscraper').defaults({onCaptcha: require('./captcha')()});
 const bodyParser = require('body-parser');
 const cache = require('memory-cache');
@@ -27,14 +26,14 @@ express()
     res.sendFile(__dirname + '/www/user.html');
   })
   .get('/api/user/:id', async(req, res) => {
-    await db.loadDatabase();
-    let userPosts = await db.cfind({ user: req.params.id }).sort({ published_at: -1 }).skip(req.query.skip || 0).limit(req.query.limit || 25).exec();
+    posts.loadDatabase();
+    let userPosts = await posts.cfind({ user: req.params.id }).sort({ published_at: -1 }).skip(req.query.skip || 0).limit(req.query.limit || 25).exec();
     res.setHeader('Cache-Control', 's-maxage=1, stale-while-revalidate');
     res.json(userPosts);
   })
   .get('/api/recent', async(req, res) => {
-    await db.loadDatabase();
-    let recentPosts = await db.cfind({}).sort({ added_at: -1 }).skip(req.query.skip || 0).limit(req.query.limit || 25).exec();
+    posts.loadDatabase();
+    let recentPosts = await posts.cfind({}).sort({ added_at: -1 }).skip(req.query.skip || 0).limit(req.query.limit || 25).exec();
     res.setHeader('Cache-Control', 's-maxage=1, stale-while-revalidate');
     res.json(recentPosts);
   })
