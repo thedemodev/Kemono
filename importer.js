@@ -1,4 +1,5 @@
 const { posts } = require('./db');
+const { workerData } = require('worker_threads')
 const cloudscraper = require('cloudscraper').defaults({onCaptcha: require('./captcha')()});
 const cd = require('content-disposition');
 const Promise = require('bluebird');
@@ -72,4 +73,4 @@ async function scraper(key, uri = 'https://api.patreon.com/stream?json-api-versi
   }
 }
 
-module.exports = (key) => scraper(key)
+scraper(workerData)

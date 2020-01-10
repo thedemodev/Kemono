@@ -1,11 +1,11 @@
 require('dotenv').config()
 const { posts } = require('./db');
+const { Worker } = require('worker_threads')
 const cloudscraper = require('cloudscraper').defaults({onCaptcha: require('./captcha')()});
 const bodyParser = require('body-parser');
 const cache = require('memory-cache');
 const express = require('express');
 const compression = require('compression');
-const importer = require('./importer');
 posts.ensureIndex({fieldName: 'user'});
 express()
   .use(compression())
@@ -39,8 +39,9 @@ express()
   })
   .post('/api/import', async(req, res) => {
     if (!req.body.session_key) res.sendStatus(401);
-    importer(req.body.session_key)
-    res.redirect('/importer/ok')
+    const worker = new Worker('./importer.js', { workerData: req.body.session_key });
+    worker.on('error', (err) => console.log(`Importer thread died: ${err}`));
+    res.redirect('/importer/ok');
   })
   .get('/proxy/user/:id', async(req, res) => {
     let options = cloudscraper.defaultParams;
