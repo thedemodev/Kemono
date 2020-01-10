@@ -27,13 +27,13 @@ express()
   })
   .get('/api/user/:id', async(req, res) => {
     posts.loadDatabase();
-    let userPosts = await posts.cfind({ user: req.params.id }).sort({ published_at: -1 }).skip(req.query.skip || 0).limit(req.query.limit || 25).exec();
+    let userPosts = await posts.cfind({ user: req.params.id }).sort({ published_at: -1 }).skip(Number(req.query.skip) || 0).limit(Number(req.query.limit) || 25).exec();
     res.setHeader('Cache-Control', 's-maxage=1, stale-while-revalidate');
     res.json(userPosts);
   })
   .get('/api/recent', async(req, res) => {
     posts.loadDatabase();
-    let recentPosts = await posts.cfind({}).sort({ added_at: -1 }).skip(req.query.skip || 0).limit(req.query.limit || 25).exec();
+    let recentPosts = await posts.cfind({}).sort({ added_at: -1 }).skip(Number(req.query.skip) || 0).limit(Number(req.query.limit) || 25).exec();
     res.setHeader('Cache-Control', 's-maxage=1, stale-while-revalidate');
     res.json(recentPosts);
   })
