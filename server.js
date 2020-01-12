@@ -1,12 +1,15 @@
 require('dotenv').config()
-const { posts } = require('./db');
+const { posts, lookup } = require('./db');
 const { Worker } = require('worker_threads')
 const cloudscraper = require('cloudscraper').defaults({onCaptcha: require('./captcha')()});
 const bodyParser = require('body-parser');
 const cache = require('memory-cache');
 const express = require('express');
+const esc = require('escape-string-regexp')
 const compression = require('compression');
+const query = require('json-query');
 posts.ensureIndex({fieldName: 'user'});
+require('./indexer')()
 express()
   .use(compression())
   .use(bodyParser.urlencoded({ extended: false }))
@@ -24,6 +27,17 @@ express()
   .get('/user/:id', (req, res) => {
     res.setHeader('Cache-Control', 's-maxage=1, stale-while-revalidate');
     res.sendFile(__dirname + '/www/user.html');
+  })
+  .get('/api/lookup', async(req, res) => {
+    if (!req.query.q || req.query.q.length > 35) return res.sendStatus(400)
+    lookup.loadDatabase();
+    let index = await lookup.find({});
+    let results = query(`[*name~/${esc(req.query.q)}/i].id`, {
+      data: index,
+      allowRegexp: true
+    });
+    res.setHeader('Cache-Control', 's-maxage=10, stale-while-revalidate');
+    res.json(results.value);
   })
   .get('/api/user/:id', async(req, res) => {
     posts.loadDatabase();
@@ -52,8 +66,6 @@ express()
     res.redirect('/importer/ok');
   })
   .get('/proxy/user/:id', async(req, res) => {
-    let options = cloudscraper.defaultParams;
-    options['json'] = true;
     let api = 'https://www.patreon.com/api/user';
     if (!cache.get(req.params.id)) {
       let options = cloudscraper.defaultParams;

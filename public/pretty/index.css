@@ -47,6 +47,10 @@ h1, h2, h3, p {
   width: 100%;
 }
 
+.search-input {
+  margin-bottom: 5px;
+}
+
 .importer-input {
   width: 100%;
   border-radius: 5px;

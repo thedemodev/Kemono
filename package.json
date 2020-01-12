@@ -1,8 +1,8 @@
 {
   "private": true,
   "scripts": {
-    "dev": "supervisor -i node_modules -n error server.js",
-    "start": "supervisor -i node_modules server.js"
+    "dev": "supervisor -i node_modules,public -n error server.js",
+    "start": "supervisor -i node_modules,public server.js"
   },
   "dependencies": {
     "bluebird": "^3.7.2",
@@ -11,8 +11,10 @@
     "compression": "^1.7.4",
     "content-disposition": "^0.5.3",
     "dotenv": "^8.2.0",
+    "escape-string-regexp": "^2.0.0",
     "express": "^4.17.1",
     "fs-extra": "^8.1.0",
+    "json-query": "^2.2.2",
     "memory-cache": "^0.2.0",
     "nedb": "^1.8.0",
     "nedb-promise": "^2.0.1",
