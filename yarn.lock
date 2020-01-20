@@ -359,6 +359,14 @@ fs-extra@^8.1.0:
     jsonfile "^4.0.0"
     universalify "^0.1.0"
 
+get-urls@^9.2.0:
+  version "9.2.0"
+  resolved "https://registry.yarnpkg.com/get-urls/-/get-urls-9.2.0.tgz#df05cfad3ad984a34a5794209b837dd507af53fd"
+  integrity sha512-ErGHKhzGIrtobqmNNxjy7yxe4cEmAp9SMerzmFpldn0CkEr2EC+SvIiyef038JDjl2LVng7MMw8YunUKM7k3ww==
+  dependencies:
+    normalize-url "^4.3.0"
+    url-regex "^5.0.0"
+
 getpass@^0.1.1:
   version "0.1.7"
   resolved "https://registry.yarnpkg.com/getpass/-/getpass-0.1.7.tgz#5eff8e3e684d569ae4cb2b1282604e8ba62149fa"
@@ -422,6 +430,11 @@ iconv-lite@0.4.24:
   dependencies:
     safer-buffer ">= 2.1.2 < 3"
 
+image-extensions@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/image-extensions/-/image-extensions-1.1.0.tgz#b8e6bf6039df0056e333502a00b6637a3105d894"
+  integrity sha1-uOa/YDnfAFbjM1AqALZjejEF2JQ=
+
 immediate@~3.0.5:
   version "3.0.6"
   resolved "https://registry.yarnpkg.com/immediate/-/immediate-3.0.6.tgz#9db1dbd0faf8de6fbe0f5dd5e56bb606280de69b"
@@ -437,10 +450,22 @@ inherits@2.0.4:
   resolved "https://registry.yarnpkg.com/inherits/-/inherits-2.0.4.tgz#0fa2c64f932917c3433a0ded55363aae37416b7c"
   integrity sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ==
 
+ip-regex@^4.1.0:
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/ip-regex/-/ip-regex-4.1.0.tgz#5ad62f685a14edb421abebc2fff8db94df67b455"
+  integrity sha512-pKnZpbgCTfH/1NLIlOduP/V+WRXzC2MOz3Qo8xmxk8C5GudJLgK5QyLVXOSWy3ParAH7Eemurl3xjv/WXYFvMA==
+
 ipaddr.js@1.9.0:
   version "1.9.0"
   resolved "https://registry.yarnpkg.com/ipaddr.js/-/ipaddr.js-1.9.0.tgz#37df74e430a0e47550fe54a2defe30d8acd95f65"
   integrity sha512-M4Sjn6N/+O6/IXSJseKqHoFc+5FdGJ22sXqnjTpdZweHK64MzEPAyQZyEU3R/KRv2GLoa7nNtg/C2Ev6m7z+eA==
+
+is-image@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/is-image/-/is-image-3.0.0.tgz#f183431372f6f8caf7cda316a0a6dea4d41926dd"
+  integrity sha512-NNPLvwKZ/hqx1Wv+ayKvVeDOylIapVKSxK/guzmB9doAk0FEdK0KqFKbnwNbuMLEPqEY4NaBhxzB4e98fVOq2Q==
+  dependencies:
+    image-extensions "^1.1.0"
 
 is-typedarray@~1.0.0:
   version "1.0.0"
@@ -550,6 +575,11 @@ mime@1.6.0:
   resolved "https://registry.yarnpkg.com/mime/-/mime-1.6.0.tgz#32cd9e5c64553bd58d19a568af452acff04981b1"
   integrity sha512-x0Vn8spI+wuJ1O6S7gnbaQg8Pxh4NNHb7KSINmEWKiPE4RKOplvijn+NkmYmmRgP68mc70j2EbeTFRsrswaQeg==
 
+mime@^2.4.4:
+  version "2.4.4"
+  resolved "https://registry.yarnpkg.com/mime/-/mime-2.4.4.tgz#bd7b91135fc6b01cde3e9bae33d659b63d8857e5"
+  integrity sha512-LRxmNwziLPT828z+4YkNzloCFC2YM4wrB99k+AV5ZbEyfGNWfG8SO1FUXLmLDBSo89NrJZ4DIWeLjy1CHGhMGA==
+
 minimist@0.0.8:
   version "0.0.8"
   resolved "https://registry.yarnpkg.com/minimist/-/minimist-0.0.8.tgz#857fcabfc3397d2625b8228262e86aa7a011b05d"
@@ -595,6 +625,11 @@ negotiator@0.6.2:
   version "0.6.2"
   resolved "https://registry.yarnpkg.com/negotiator/-/negotiator-0.6.2.tgz#feacf7ccf525a77ae9634436a64883ffeca346fb"
   integrity sha512-hZXc7K2e+PgeI1eDBe/10Ard4ekbfrrqG8Ep+8Jmf4JID2bNg7NvCPOZN+kfF574pFQI7mum2AUqDidoKqcTOw==
+
+normalize-url@^4.3.0:
+  version "4.5.0"
+  resolved "https://registry.yarnpkg.com/normalize-url/-/normalize-url-4.5.0.tgz#453354087e6ca96957bd8f5baf753f5982142129"
+  integrity sha512-2s47yzUxdexf1OhyRi4Em83iQk0aPvwTddtFz4hnSSw9dCEsLEGf6SwIO8ss/19S9iBb5sJaOuTvTGDeZI00BQ==
 
 oauth-sign@~0.9.0:
   version "0.9.0"
@@ -810,6 +845,11 @@ thenify@^3.2.0:
   dependencies:
     any-promise "^1.0.0"
 
+tlds@^1.203.0:
+  version "1.207.0"
+  resolved "https://registry.yarnpkg.com/tlds/-/tlds-1.207.0.tgz#459264e644cf63ddc0965fece3898913286b1afd"
+  integrity sha512-k7d7Q1LqjtAvhtEOs3yN14EabsNO8ZCoY6RESSJDB9lst3bTx3as/m1UuAeCKzYxiyhR1qq72ZPhpSf+qlqiwg==
+
 toidentifier@1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/toidentifier/-/toidentifier-1.0.0.tgz#7e1be3470f1e77948bc43d94a3c8f4d7752ba553"
@@ -872,6 +912,14 @@ uri-js@^4.2.2:
   integrity sha512-KY9Frmirql91X2Qgjry0Wd4Y+YTdrdZheS8TFwvkbLWf/G5KNJDCh6pKL5OZctEW4+0Baa5idK2ZQuELRwPznQ==
   dependencies:
     punycode "^2.1.0"
+
+url-regex@^5.0.0:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/url-regex/-/url-regex-5.0.0.tgz#8f5456ab83d898d18b2f91753a702649b873273a"
+  integrity sha512-O08GjTiAFNsSlrUWfqF1jH0H1W3m35ZyadHrGv5krdnmPPoxP27oDTqux/579PtaroiSGm5yma6KT1mHFH6Y/g==
+  dependencies:
+    ip-regex "^4.1.0"
+    tlds "^1.203.0"
 
 utils-merge@1.0.1:
   version "1.0.1"

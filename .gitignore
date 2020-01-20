@@ -6,6 +6,9 @@ storage/
 # Databases...
 *.db
 downloads/
+files/
+attachments/
+inline/
 
 # Logs
 logs

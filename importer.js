@@ -1,11 +1,36 @@
 const { posts } = require('./db');
-const { workerData } = require('worker_threads')
-const cloudscraper = require('cloudscraper').defaults({onCaptcha: require('./captcha')()});
+const { workerData } = require('worker_threads');
+const cloudscraper = require('cloudscraper')
+  .defaults({
+    onCaptcha: require('./captcha')()
+  });
 const cd = require('content-disposition');
 const Promise = require('bluebird');
 const request = require('request-promise');
 const indexer = require('./indexer');
 const fs = require('fs-extra');
+const isImage = require('is-image');
+const mime = require('mime')
+const getUrls = require('get-urls');
+const sanitizePostContent = async(content) => {
+  // mirror and replace any inline images
+  let contentToSanitize = content;
+  let urls = getUrls(contentToSanitize, {
+    sortQueryParameters: false,
+    stripWWW: false
+  });
+  await Promise.map(urls, async(val) => {
+    let url = new URL(val);
+    if (isImage(url.origin + url.pathname)) {
+      let imageMime = mime.getType(url.origin + url.pathname);
+      let filename = new Date().getTime() + '.' + mime.getExtension(imageMime);
+      let data = await request.get({url: val, encoding: 'binary'});
+      fs.outputFile(`${process.env.DB_ROOT}/inline/${filename}`, data, 'binary');
+      contentToSanitize = contentToSanitize.replace(val, `https://kemono.party/inline/${filename}`);
+    }
+  })
+  return contentToSanitize;
+}
 async function scraper(key, uri = 'https://api.patreon.com/stream?json-api-version=1.0') {
   let options = cloudscraper.defaultParams;
   options.headers['cookie'] = `session_id=${key}`;
@@ -24,7 +49,7 @@ async function scraper(key, uri = 'https://api.patreon.com/stream?json-api-versi
       let postDb = {
         version: 1,
         title: attr.title,
-        content: attr.content,
+        content: await sanitizePostContent(attr.content),
         id: post.id,
         user: rel.user.data.id,
         post_type: attr.post_type,

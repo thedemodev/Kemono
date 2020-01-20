@@ -24,6 +24,9 @@ express()
   .use('/attachments', express.static(`${process.env.DB_ROOT}/attachments`, {
     setHeaders: (res) => res.setHeader('Cache-Control', 's-maxage=2592000')
   }))
+  .use('/inline', express.static(`${process.env.DB_ROOT}/inline`, {
+    setHeaders: (res) => res.setHeader('Cache-Control', 's-maxage=2592000')
+  }))
   .get('/user/:id', (req, res) => {
     res.setHeader('Cache-Control', 's-maxage=1, stale-while-revalidate');
     res.sendFile(__dirname + '/www/user.html');

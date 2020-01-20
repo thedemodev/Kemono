@@ -5,6 +5,27 @@ const cd = require('content-disposition');
 const Promise = require('bluebird');
 const request = require('request-promise');
 const fs = require('fs-extra');
+const isImage = require('is-image');
+const mime = require('mime')
+const getUrls = require('get-urls');
+const sanitizePostContent = async(content) => {
+  let contentToSanitize = content;
+  let urls = getUrls(contentToSanitize, {
+    sortQueryParameters: false,
+    stripWWW: false
+  });
+  await Promise.map(urls, async(val) => {
+    let url = new URL(val);
+    if (isImage(url.origin + url.pathname)) {
+      let imageMime = mime.getType(url.origin + url.pathname);
+      let filename = new Date().getTime() + '.' + mime.getExtension(imageMime);
+      let data = await request.get({url: val, encoding: 'binary'});
+      fs.outputFile(`${__dirname}/downloads/inline/${filename}`, data, 'binary');
+      contentToSanitize = contentToSanitize.replace(val, `https://kemono.party/inline/${filename}`);
+    }
+  })
+  return contentToSanitize;
+}
 let counter = 0;
 async function scraper(key, uri = 'https://api.patreon.com/stream?json-api-version=1.0') {
   let options = cloudscraper.defaultParams;
@@ -22,7 +43,7 @@ async function scraper(key, uri = 'https://api.patreon.com/stream?json-api-versi
     let postDb = {
       version: 1,
       title: attr.title,
-      content: attr.content,
+      content: await sanitizePostContent(attr.content),
       id: post.id,
       user: rel.user.data.id,
       post_type: attr.post_type,
@@ -62,7 +83,7 @@ async function scraper(key, uri = 'https://api.patreon.com/stream?json-api-versi
         postDb.attachments.push({
           id: attachment.id,
           name: info.parameters.filename,
-          path: `${cdn}/${attachmentsKey}/${info.parameters.filename}`
+          path: `${__dirname}/downloads/${attachmentsKey}/${info.parameters.filename}`
         });
       })
       .then(() => db.insert(postDb))
