@@ -60,7 +60,6 @@ async function scraper(key, uri = 'https://api.patreon.com/stream?json-api-versi
         attachments: []
       };
 
-      posts.loadDatabase();
       let postExists = await posts.findOne({id: post.id});
       if (postExists) return;
 
@@ -93,12 +92,12 @@ async function scraper(key, uri = 'https://api.patreon.com/stream?json-api-versi
           });
         })
         .then(() => posts.insert(postDb))
-    })
-    .then(() => indexer())
+    }, { concurrency: 1 })
   
   if (patreon.body.links.next) {
     scraper(key, 'https://' + patreon.body.links.next)
   }
 }
 
-scraper(workerData)
+posts.loadDatabase();
+scraper(workerData).then(() => indexer())
