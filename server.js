@@ -16,7 +16,7 @@ express()
   .use(bodyParser.json())
   .use(express.static('public', {
     extensions: ['html', 'htm'],
-    setHeaders: (res) => res.setHeader('Cache-Control', 's-maxage=1, stale-while-revalidate')
+    setHeaders: (res) => res.setHeader('Cache-Control', 's-maxage=1, stale-while-revalidate=30')
   }))
   .use('/files', express.static(`${process.env.DB_ROOT}/files`, {
     setHeaders: (res) => res.setHeader('Cache-Control', 's-maxage=2592000')
@@ -28,7 +28,7 @@ express()
     setHeaders: (res) => res.setHeader('Cache-Control', 's-maxage=2592000')
   }))
   .get('/user/:id', (req, res) => {
-    res.setHeader('Cache-Control', 's-maxage=1, stale-while-revalidate');
+    res.setHeader('Cache-Control', 's-maxage=1, stale-while-revalidate=30');
     res.sendFile(__dirname + '/www/user.html');
   })
   .get('/api/lookup', async(req, res) => {
@@ -39,7 +39,7 @@ express()
       data: index,
       allowRegexp: true
     });
-    res.setHeader('Cache-Control', 's-maxage=10, stale-while-revalidate');
+    res.setHeader('Cache-Control', 's-maxage=10, stale-while-revalidate=30');
     res.json(results.value);
   })
   .get('/api/user/:id', async(req, res) => {
@@ -49,7 +49,7 @@ express()
       .skip(Number(req.query.skip) || 0)
       .limit(Number(req.query.limit) || 25)
       .exec();
-    res.setHeader('Cache-Control', 's-maxage=1, stale-while-revalidate');
+    res.setHeader('Cache-Control', 's-maxage=1, stale-while-revalidate=30');
     res.json(userPosts);
   })
   .get('/api/recent', async(req, res) => {
@@ -59,7 +59,7 @@ express()
       .skip(Number(req.query.skip) || 0)
       .limit(Number(req.query.limit) || 25)
       .exec();
-    res.setHeader('Cache-Control', 's-maxage=1, stale-while-revalidate');
+    res.setHeader('Cache-Control', 's-maxage=1, stale-while-revalidate=30');
     res.json(recentPosts);
   })
   .post('/api/import', async(req, res) => {
