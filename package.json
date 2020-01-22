@@ -1,8 +1,7 @@
 {
   "private": true,
   "scripts": {
-    "dev": "supervisor -i node_modules,public -n error server.js",
-    "start": "supervisor -i node_modules,public server.js"
+    "start": "supervisor -i node_modules,public -n error server.js"
   },
   "dependencies": {
     "bluebird": "^3.7.2",
