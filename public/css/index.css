@@ -183,7 +183,6 @@ h1, h2, h3, p {
 
 .recent-row-container {
   display: flex;
-  flex-wrap: wrap;
 }
 
 .recent-row p {
