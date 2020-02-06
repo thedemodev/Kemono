@@ -133,6 +133,16 @@ h1, h2, h3, p {
   background-size: 25px;
 }
 
+.user-header-info-fanbox {
+  background-image: url(/fanbox.svg);
+  margin-top: 15px;
+  margin-left: 10px;
+  width: 50px;
+  height: 40px;
+  background-size: 100% auto;
+  background-repeat: no-repeat;
+}
+
 .user-post-view {
   margin-top: 5px;
   min-height:0;
