@@ -12,7 +12,7 @@ async function searchUpdate() {
       <div class="recent-row">
         <div class="recent-row-container">
           <a href="/user/${userId}">
-          <div class="avatar" style="background: url('${user.included[0].attributes.avatar_photo_url}');"></div>
+          <div class="avatar" style="background-image: url('${user.included[0].attributes.avatar_photo_url}');"></div>
           </a>
           <div style="display: inline-block">
             <a class="link-reset" href="/user/${userId}">
@@ -44,7 +44,7 @@ async function main() {
       <div class="recent-row">
         <div class="recent-row-container">
           <a href="/user/${userQueue[post.user].data.id}">
-            <div class="avatar" style="background: url('${userQueue[post.user].included[0].attributes.avatar_photo_url}');"></div>
+            <div class="avatar" style="background-image: url('${userQueue[post.user].included[0].attributes.avatar_photo_url}');"></div>
           </a>
           <div style="display: inline-block">
             <a class="link-reset" href="/user/${userQueue[post.user].data.id}">
