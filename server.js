@@ -8,8 +8,9 @@ const express = require('express');
 const esc = require('escape-string-regexp')
 const compression = require('compression');
 const query = require('json-query');
-posts.ensureIndex({fieldName: 'user'});
+new Worker('./node_modules/nedb-multi/server.js', { env: { NEDB_MULTI_PORT: '40404' } })
 require('./indexer')()
+posts.ensureIndex({fieldName: 'user'});
 express()
   .use(compression())
   .use(bodyParser.urlencoded({ extended: false }))

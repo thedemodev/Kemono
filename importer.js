@@ -94,10 +94,11 @@ async function scraper(key, uri = 'https://api.patreon.com/stream?json-api-versi
         .then(() => posts.insert(postDb))
     }, { concurrency: 1 })
   
+  indexer()
   if (patreon.body.links.next) {
     scraper(key, 'https://' + patreon.body.links.next)
   }
 }
 
 posts.loadDatabase();
-scraper(workerData).then(() => indexer())
+scraper(workerData)
