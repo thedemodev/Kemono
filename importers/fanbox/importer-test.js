@@ -34,7 +34,7 @@ async function scraper(key) {
 }
 
 async function processFanbox(url, key) {
-  let data = await request.get(url, requestOptions(key));
+  let data = await request.get(unraw(url), requestOptions(key));
   let postData = {};
   if (data.message == "") {
     postItems = data.body.post; // initial page
