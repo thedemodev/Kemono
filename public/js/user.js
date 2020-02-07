@@ -70,7 +70,7 @@ async function main() {
       class="user-header-view" 
       style="background: url('${user.included[0].attributes.cover_photo_url}'); background-size: 100% auto; background-position: center;"
     >
-      <div class="user-header-avatar" style="url('${user.included[0].attributes.avatar_photo_url}');"></img>
+      <div class="user-header-avatar" style="background: url('${user.included[0].attributes.avatar_photo_url}');"></img>
       <div class="user-header-info">
         <div class="user-header-info-top">
           <h1>${user.data.attributes.vanity || user.data.attributes.full_name}</h1>
