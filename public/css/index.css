@@ -77,7 +77,7 @@ h1, h2, h3, p {
 }
 
 .footer p {
-  line-height: 8px;
+  margin: 0;
 }
 
 .embed-view {
@@ -92,8 +92,7 @@ h1, h2, h3, p {
 }
 
 .martha-view {
-  width: 590px;
-  min-width: 590px;
+  max-width: 590px;
   display: flex;
   flex-direction: column;
   margin: 0 auto;
