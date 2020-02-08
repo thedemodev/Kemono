@@ -11,6 +11,7 @@ const fs = require('fs-extra');
 const isImage = require('is-image');
 const mime = require('mime')
 const getUrls = require('get-urls');
+const crypto = require('crypto');
 const sanitizePostContent = async(content) => {
   // mirror and replace any inline images
   let contentToSanitize = content;
@@ -23,8 +24,8 @@ const sanitizePostContent = async(content) => {
     if (isImage(url.origin + url.pathname)) {
       let imageMime = mime.getType(url.origin + url.pathname);
       let filename = new Date().getTime() + '.' + mime.getExtension(imageMime);
-      let data = await request.get({url: val, encoding: 'binary'});
-      fs.outputFile(`${process.env.DB_ROOT}/inline/${filename}`, data, 'binary');
+      request.get({url: val, encoding: null})
+        .pipe(fs.createWriteStream(`${process.env.DB_ROOT}/inline/${filename}`, 'binary'))
       contentToSanitize = contentToSanitize.replace(val, `https://kemono.party/inline/${filename}`);
     }
   })
@@ -64,7 +65,7 @@ async function scraper(key, uri = 'https://api.patreon.com/stream?json-api-versi
 
       if (attr.post_file) {
         await fs.ensureFile(`${process.env.DB_ROOT}/${fileKey}/${attr.post_file.name}`);
-        await request.get({url: attr.post_file.url})
+        await request.get({url: attr.post_file.url, encoding: null})
           .pipe(fs.createWriteStream(`${process.env.DB_ROOT}/${fileKey}/${attr.post_file.name}`, 'binary'))
         postDb.post_file['name'] = attr.post_file.name
         postDb.post_file['path'] = `${cdn}/${fileKey}/${attr.post_file.name}`
@@ -78,17 +79,27 @@ async function scraper(key, uri = 'https://api.patreon.com/stream?json-api-versi
 
       Promise
         .mapSeries(rel.attachments.data, async(attachment) => {
-          await cloudscraper.get(`https://www.patreon.com/file?h=${post.id}&i=${attachment.id}`)
-            .on('response', async(attachmentData) => {
+          // use content disposition
+          let attachmentOptions = cloudscraper.defaultParams;
+          attachmentOptions['encoding'] = null;
+          attachmentOptions.headers['cookie'] = `session_id=${key}`;
+
+          let randomKey = crypto.randomBytes(20).toString('hex');
+          await fs.ensureFile(`${process.env.DB_ROOT}/${attachmentsKey}/${randomKey}`);
+          cloudscraper.get(`https://www.patreon.com/file?h=${post.id}&i=${attachment.id}`, attachmentOptions)
+            .on('complete', async(attachmentData) => {
               let info = cd.parse(attachmentData.headers['content-disposition']);
               postDb.attachments.push({
-                id: attachment.id, 
+                id: attachment.id,
                 name: info.parameters.filename,
                 path: `${cdn}/${attachmentsKey}/${info.parameters.filename}`
               })
-              await fs.ensureFile(`${process.env.DB_ROOT}/${attachmentsKey}/${info.parameters.filename}`);
-              attachmentData.pipe(fs.createWriteStream(`${process.env.DB_ROOT}/${attachmentsKey}/${info.parameters.filename}`, 'binary'));
+              await fs.move(
+                `${process.env.DB_ROOT}/${attachmentsKey}/${randomKey}`,
+                `${process.env.DB_ROOT}/${attachmentsKey}/${info.parameters.filename}`
+              );
             })
+            .pipe(fs.createWriteStream(`${process.env.DB_ROOT}/${attachmentsKey}/${randomKey}`, 'binary'))
         })
         .then(() => posts.insert(postDb))
     })
