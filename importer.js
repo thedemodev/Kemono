@@ -64,8 +64,8 @@ async function scraper(key, uri = 'https://api.patreon.com/stream?json-api-versi
 
       if (attr.post_file) {
         await fs.ensureFile(`${process.env.DB_ROOT}/${fileKey}/${attr.post_file.name}`);
-        await request.get({url: attr.post_file.url, encoding: 'binary'})
-          .pipe(fs.createWriteStream(`${process.env.DB_ROOT}/${fileKey}/${attr.post_file.name}`))
+        await request.get({url: attr.post_file.url})
+          .pipe(fs.createWriteStream(`${process.env.DB_ROOT}/${fileKey}/${attr.post_file.name}`, 'binary'))
         postDb.post_file['name'] = attr.post_file.name
         postDb.post_file['path'] = `${cdn}/${fileKey}/${attr.post_file.name}`
       }
@@ -78,11 +78,7 @@ async function scraper(key, uri = 'https://api.patreon.com/stream?json-api-versi
 
       Promise
         .mapSeries(rel.attachments.data, async(attachment) => {
-          // use content disposition
-          let attachmentOptions = options;
-          attachmentOptions['encoding'] = 'binary';
-
-          await cloudscraper.get(`https://www.patreon.com/file?h=${post.id}&i=${attachment.id}`, attachmentOptions)
+          await cloudscraper.get(`https://www.patreon.com/file?h=${post.id}&i=${attachment.id}`)
             .on('response', async(attachmentData) => {
               let info = cd.parse(attachmentData.headers['content-disposition']);
               postDb.attachments.push({
@@ -91,7 +87,7 @@ async function scraper(key, uri = 'https://api.patreon.com/stream?json-api-versi
                 path: `${cdn}/${attachmentsKey}/${info.parameters.filename}`
               })
               await fs.ensureFile(`${process.env.DB_ROOT}/${attachmentsKey}/${info.parameters.filename}`);
-              attachmentData.pipe(fs.createWriteStream(`${process.env.DB_ROOT}/${attachmentsKey}/${info.parameters.filename}`));
+              attachmentData.pipe(fs.createWriteStream(`${process.env.DB_ROOT}/${attachmentsKey}/${info.parameters.filename}`, 'binary'));
             })
         })
         .then(() => posts.insert(postDb))
