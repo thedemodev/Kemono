@@ -5,8 +5,8 @@
     "yarn": "~1.21"
   },
   "scripts": {
-    "dev": "node server.js",
-    "start": "supervisor -i node_modules,public -n error server.js"
+    "dev": "supervisor -i node_modules,public -n error server.js",
+    "start": "node server.js"
   },
   "dependencies": {
     "bluebird": "^3.7.2",
