@@ -1,5 +1,4 @@
 const { posts } = require('./db');
-const { workerData } = require('worker_threads');
 const cloudscraper = require('cloudscraper')
   .defaults({
     onCaptcha: require('./captcha')()
@@ -19,7 +18,7 @@ const sanitizePostContent = async(content) => {
     sortQueryParameters: false,
     stripWWW: false
   });
-  await Promise.map(urls, async(val) => {
+  await Promise.mapSeries(urls, async(val) => {
     let url = new URL(val);
     if (isImage(url.origin + url.pathname)) {
       let imageMime = mime.getType(url.origin + url.pathname);
@@ -38,8 +37,8 @@ async function scraper(key, uri = 'https://api.patreon.com/stream?json-api-versi
   options['json'] = true;
 
   let patreon = await cloudscraper.get(uri, options)
-  Promise
-    .map(patreon.body.data, async(post) => {
+  await Promise
+    .mapSeries(patreon.body.data, async(post) => {
       let attr = post.attributes;
       let rel = post.relationships;
       let cdn = 'https://kemono.party'
@@ -77,7 +76,7 @@ async function scraper(key, uri = 'https://api.patreon.com/stream?json-api-versi
       }
 
       Promise
-        .map(rel.attachments.data, async(attachment) => {
+        .mapSeries(rel.attachments.data, async(attachment) => {
           // use content disposition
           let attachmentOptions = options;
           attachmentOptions['encoding'] = 'binary';
@@ -92,7 +91,7 @@ async function scraper(key, uri = 'https://api.patreon.com/stream?json-api-versi
           });
         })
         .then(() => posts.insert(postDb))
-    }, { concurrency: 1 })
+    })
   
   indexer()
   if (patreon.body.links.next) {
@@ -101,4 +100,4 @@ async function scraper(key, uri = 'https://api.patreon.com/stream?json-api-versi
 }
 
 posts.loadDatabase();
-scraper(workerData)
+module.exports = (key) => scraper(key)

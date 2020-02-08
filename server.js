@@ -1,4 +1,5 @@
 require('dotenv').config()
+const importer = require('./importer');
 const { posts, lookup } = require('./db');
 const { Worker } = require('worker_threads')
 const cloudscraper = require('cloudscraper').defaults({onCaptcha: require('./captcha')()});
@@ -65,8 +66,7 @@ express()
   })
   .post('/api/import', async(req, res) => {
     if (!req.body.session_key) res.sendStatus(401);
-    const worker = new Worker('./importer.js', { workerData: req.body.session_key });
-    worker.on('error', (err) => console.log(`Importer thread died: ${err}`));
+    importer(req.body.session_key);
     res.redirect('/importer/ok');
   })
   .get('/proxy/user/:id', async(req, res) => {
