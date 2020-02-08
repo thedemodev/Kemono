@@ -63,7 +63,7 @@ async function scraper(key, uri = 'https://api.patreon.com/stream?json-api-versi
       if (postExists) return;
 
       if (attr.post_file) {
-        fs.ensureFile(`${process.env.DB_ROOT}/${fileKey}/${attr.post_file.name}`);
+        await fs.ensureFile(`${process.env.DB_ROOT}/${fileKey}/${attr.post_file.name}`);
         await request.get({url: attr.post_file.url, encoding: 'binary'})
           .pipe(fs.createWriteStream(`${process.env.DB_ROOT}/${fileKey}/${attr.post_file.name}`, 'binary'))
         postDb.post_file['name'] = attr.post_file.name
@@ -83,14 +83,14 @@ async function scraper(key, uri = 'https://api.patreon.com/stream?json-api-versi
           attachmentOptions['encoding'] = 'binary';
 
           await cloudscraper.get(`https://www.patreon.com/file?h=${post.id}&i=${attachment.id}`, attachmentOptions)
-            .on('response', (attachmentData) => {
+            .on('response', async(attachmentData) => {
               let info = cd.parse(attachmentData.headers['content-disposition']);
               postDb.attachments.push({
                 id: attachment.id, 
                 name: info.parameters.filename,
                 path: `${cdn}/${attachmentsKey}/${info.parameters.filename}`
               })
-              fs.ensureFile(`${process.env.DB_ROOT}/${attachmentsKey}/${info.parameters.filename}`);
+              await fs.ensureFile(`${process.env.DB_ROOT}/${attachmentsKey}/${info.parameters.filename}`);
               res.pipe(fs.createWriteStream(`${process.env.DB_ROOT}/${attachmentsKey}/${info.parameters.filename}`, 'binary'));
             })
         })
