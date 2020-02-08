@@ -63,8 +63,8 @@ async function scraper(key, uri = 'https://api.patreon.com/stream?json-api-versi
       if (postExists) return;
 
       if (attr.post_file) {
-        let fileData = await request.get({url: attr.post_file.url, encoding: 'binary'})
-        fs.outputFile(`${process.env.DB_ROOT}/${fileKey}/${attr.post_file.name}`, fileData, 'binary')
+        await request.get({url: attr.post_file.url, encoding: 'binary'})
+          .pipe(fs.createWriteStream(`${process.env.DB_ROOT}/${fileKey}/${attr.post_file.name}`, 'binary'))
         postDb.post_file['name'] = attr.post_file.name
         postDb.post_file['path'] = `${cdn}/${fileKey}/${attr.post_file.name}`
       }
@@ -81,14 +81,16 @@ async function scraper(key, uri = 'https://api.patreon.com/stream?json-api-versi
           let attachmentOptions = options;
           attachmentOptions['encoding'] = 'binary';
 
-          let attachmentData = await cloudscraper.get(`https://www.patreon.com/file?h=${post.id}&i=${attachment.id}`, attachmentOptions);
-          let info = cd.parse(attachmentData.headers['content-disposition']);
-          fs.outputFile(`${process.env.DB_ROOT}/${attachmentsKey}/${info.parameters.filename}`, attachmentData.body, 'binary')
-          postDb.attachments.push({
-            id: attachment.id, 
-            name: info.parameters.filename,
-            path: `${cdn}/${attachmentsKey}/${info.parameters.filename}`
-          });
+          await cloudscraper.get(`https://www.patreon.com/file?h=${post.id}&i=${attachment.id}`, attachmentOptions)
+            .on('response', (attachmentData) => {
+              let info = cd.parse(attachmentData.headers['content-disposition']);
+              postDb.attachments.push({
+                id: attachment.id, 
+                name: info.parameters.filename,
+                path: `${cdn}/${attachmentsKey}/${info.parameters.filename}`
+              })
+              res.pipe(fs.createWriteStream(`${process.env.DB_ROOT}/${attachmentsKey}/${info.parameters.filename}`, 'binary'));
+            })
         })
         .then(() => posts.insert(postDb))
     })
