@@ -1,7 +1,12 @@
 {
   "private": true,
+  "engines": {
+    "node": "~13.7",
+    "yarn": "~1.21"
+  },
   "scripts": {
-    "start": "supervisor -i node_modules,public -n error server.js"
+    "dev": "supervisor -i node_modules,public -n error server.js",
+    "start": "node server.js"
   },
   "dependencies": {
     "bluebird": "^3.7.2",
