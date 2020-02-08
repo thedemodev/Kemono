@@ -25,7 +25,9 @@ const sanitizePostContent = async(content) => {
       let imageMime = mime.getType(url.origin + url.pathname);
       let filename = new Date().getTime() + '.' + mime.getExtension(imageMime);
       request.get({url: val, encoding: null})
-        .pipe(fs.createWriteStream(`${process.env.DB_ROOT}/inline/${filename}`, 'binary'))
+        .pipe(fs.createWriteStream(`${process.env.DB_ROOT}/inline/${filename}`, {
+          highWaterMark: 64 * 1024
+        }))
       contentToSanitize = contentToSanitize.replace(val, `https://kemono.party/inline/${filename}`);
     }
   })
@@ -66,7 +68,9 @@ async function scraper(key, uri = 'https://api.patreon.com/stream?json-api-versi
       if (attr.post_file) {
         await fs.ensureFile(`${process.env.DB_ROOT}/${fileKey}/${attr.post_file.name}`);
         await request.get({url: attr.post_file.url, encoding: null})
-          .pipe(fs.createWriteStream(`${process.env.DB_ROOT}/${fileKey}/${attr.post_file.name}`, 'binary'))
+          .pipe(fs.createWriteStream(`${process.env.DB_ROOT}/${fileKey}/${attr.post_file.name}`, {
+            highWaterMark: 64 * 1024
+          }))
         postDb.post_file['name'] = attr.post_file.name
         postDb.post_file['path'] = `${cdn}/${fileKey}/${attr.post_file.name}`
       }
@@ -99,7 +103,9 @@ async function scraper(key, uri = 'https://api.patreon.com/stream?json-api-versi
                 `${process.env.DB_ROOT}/${attachmentsKey}/${info.parameters.filename}`
               );
             })
-            .pipe(fs.createWriteStream(`${process.env.DB_ROOT}/${attachmentsKey}/${randomKey}`, 'binary'))
+            .pipe(fs.createWriteStream(`${process.env.DB_ROOT}/${attachmentsKey}/${randomKey}`, {
+              highWaterMark: 64 * 1024
+            }))
         })
         .then(() => posts.insert(postDb))
     })
