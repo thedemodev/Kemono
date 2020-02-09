@@ -3,6 +3,11 @@ const cloudscraper = require('cloudscraper')
   .defaults({
     onCaptcha: require('./captcha')()
   });
+const cloudscraper2 = require('cloudscraper') // https://github.com/request/request/issues/2974
+  .defaults({
+    onCaptcha: require('./captcha')(),
+    encoding: null
+  });
 const cd = require('content-disposition');
 const Promise = require('bluebird');
 const request = require('request-promise');
@@ -90,7 +95,7 @@ async function scraper(key, uri = 'https://api.patreon.com/stream?json-api-versi
 
           let randomKey = crypto.randomBytes(20).toString('hex');
           await fs.ensureFile(`${process.env.DB_ROOT}/${attachmentsKey}/${randomKey}`);
-          cloudscraper.get(`https://www.patreon.com/file?h=${post.id}&i=${attachment.id}`, attachmentOptions)
+          cloudscraper2.get(`https://www.patreon.com/file?h=${post.id}&i=${attachment.id}`, attachmentOptions)
             .on('complete', async(attachmentData) => {
               let info = cd.parse(attachmentData.headers['content-disposition']);
               postDb.attachments.push({
