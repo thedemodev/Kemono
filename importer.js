@@ -107,12 +107,12 @@ async function scraper(key, uri = 'https://api.patreon.com/stream?json-api-versi
                 `${process.env.DB_ROOT}/${attachmentsKey}/${randomKey}`,
                 `${process.env.DB_ROOT}/${attachmentsKey}/${info.parameters.filename}`
               );
+              posts.insert(postDb)
             })
             .pipe(fs.createWriteStream(`${process.env.DB_ROOT}/${attachmentsKey}/${randomKey}`, {
               highWaterMark: 64 * 1024
             }))
         })
-        .then(() => posts.insert(postDb))
     })
   
   indexer()
