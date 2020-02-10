@@ -95,24 +95,27 @@ async function scraper(key, uri = 'https://api.patreon.com/stream?json-api-versi
 
           let randomKey = crypto.randomBytes(20).toString('hex');
           await fs.ensureFile(`${process.env.DB_ROOT}/${attachmentsKey}/${randomKey}`);
-          cloudscraper2.get(`https://www.patreon.com/file?h=${post.id}&i=${attachment.id}`, attachmentOptions)
-            .on('complete', async(attachmentData) => {
-              let info = cd.parse(attachmentData.headers['content-disposition']);
-              postDb.attachments.push({
-                id: attachment.id,
-                name: info.parameters.filename,
-                path: `${cdn}/${attachmentsKey}/${info.parameters.filename}`
+          await new Promise(resolve => {
+            cloudscraper2.get(`https://www.patreon.com/file?h=${post.id}&i=${attachment.id}`, attachmentOptions)
+              .on('complete', async(attachmentData) => {
+                let info = cd.parse(attachmentData.headers['content-disposition']);
+                postDb.attachments.push({
+                  id: attachment.id,
+                  name: info.parameters.filename,
+                  path: `${cdn}/${attachmentsKey}/${info.parameters.filename}`
+                })
+                await fs.move(
+                  `${process.env.DB_ROOT}/${attachmentsKey}/${randomKey}`,
+                  `${process.env.DB_ROOT}/${attachmentsKey}/${info.parameters.filename}`
+                );
+                resolve()
               })
-              await fs.move(
-                `${process.env.DB_ROOT}/${attachmentsKey}/${randomKey}`,
-                `${process.env.DB_ROOT}/${attachmentsKey}/${info.parameters.filename}`
-              );
-              posts.insert(postDb)
-            })
-            .pipe(fs.createWriteStream(`${process.env.DB_ROOT}/${attachmentsKey}/${randomKey}`, {
-              highWaterMark: 64 * 1024
-            }))
+              .pipe(fs.createWriteStream(`${process.env.DB_ROOT}/${attachmentsKey}/${randomKey}`, {
+                highWaterMark: 64 * 1024
+              }))
+          })   
         })
+        .then(() => posts.insert(postDb))
     })
   
   indexer()
