@@ -1,4 +1,5 @@
 const { posts } = require('./db');
+const { workerData } = require('worker_threads')
 const cloudscraper = require('cloudscraper')
   .defaults({
     onCaptcha: require('./captcha')()
@@ -39,12 +40,14 @@ const sanitizePostContent = async(content) => {
   return contentToSanitize;
 }
 async function scraper(key, uri = 'https://api.patreon.com/stream?json-api-version=1.0') {
+  let safeToLoop = true;
   let options = cloudscraper.defaultParams;
   options.headers['cookie'] = `session_id=${key}`;
   options['resolveWithFullResponse'] = true;
   options['json'] = true;
 
   let patreon = await cloudscraper.get(uri, options)
+  if (patreon.body.data.length == 0) safeToLoop = false;
   await Promise
     .mapSeries(patreon.body.data, async(post) => {
       let attr = post.attributes;
@@ -115,14 +118,18 @@ async function scraper(key, uri = 'https://api.patreon.com/stream?json-api-versi
               }))
           })   
         })
-        .then(() => posts.insert(postDb))
+        .then(() => {
+          await posts.insert(postDb)
+          postDb = null; // avoid memory leaks
+        })
     })
   
   indexer()
-  if (patreon.body.links.next) {
+  if (patreon.body.links.next && safeToLoop) {
     scraper(key, 'https://' + patreon.body.links.next)
+    patreon = null;
   }
 }
 
 posts.loadDatabase();
-module.exports = (key) => scraper(key)
+scraper(workerData)

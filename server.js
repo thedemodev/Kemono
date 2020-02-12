@@ -66,16 +66,18 @@ express()
   })
   .post('/api/import', async(req, res) => {
     if (!req.body.session_key) res.sendStatus(401);
-    importer(req.body.session_key);
+    new Worker('./importer.js', { workerData: req.body.session_key })
     res.redirect('/importer/ok');
   })
   .get('/proxy/user/:id', async(req, res) => {
     let api = 'https://www.patreon.com/api/user';
     let options = cloudscraper.defaultParams;
     options['json'] = true;
-    let user = await cloudscraper.get(`${api}/${req.params.id}`, options).catch(() => res.sendStatus(404));
-    
-    res.setHeader('Cache-Control', 'max-age=600, public');
-    res.json(user);
+    cloudscraper.get(`${api}/${req.params.id}`, options)
+      .then(user => {
+        res.setHeader('Cache-Control', 'max-age=600, public');
+        res.json(user);
+      })
+      .catch(() => res.sendStatus(404));
   })
   .listen(process.env.PORT || 8080)
