@@ -118,7 +118,7 @@ async function scraper(key, uri = 'https://api.patreon.com/stream?json-api-versi
               }))
           })   
         })
-        .then(() => {
+        .then(async() => {
           await posts.insert(postDb)
           postDb = null; // avoid memory leaks
         })
