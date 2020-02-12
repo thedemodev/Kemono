@@ -21,7 +21,6 @@
     "get-urls": "^9.2.0",
     "is-image": "^3.0.0",
     "json-query": "^2.2.2",
-    "memory-cache": "^0.2.0",
     "mime": "^2.4.4",
     "nedb": "^1.8.0",
     "nedb-multi": "^1.2.2",

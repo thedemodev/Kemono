@@ -1,10 +1,8 @@
 require('dotenv').config()
-const importer = require('./importer');
 const { posts, lookup } = require('./db');
 const { Worker } = require('worker_threads')
 const cloudscraper = require('cloudscraper').defaults({onCaptcha: require('./captcha')()});
 const bodyParser = require('body-parser');
-const cache = require('memory-cache');
 const express = require('express');
 const esc = require('escape-string-regexp')
 const compression = require('compression');
@@ -66,7 +64,12 @@ express()
   })
   .post('/api/import', async(req, res) => {
     if (!req.body.session_key) res.sendStatus(401);
-    new Worker('./importer.js', { workerData: req.body.session_key })
+    new Worker('./importer.js', { 
+      workerData: req.body.session_key,
+      resourceLimits: {
+        maxOldGenerationSizeMb: 512
+      }
+    })
     res.redirect('/importer/ok');
   })
   .get('/proxy/user/:id', async(req, res) => {
