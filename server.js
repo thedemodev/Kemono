@@ -65,7 +65,7 @@ express()
   })
   .post('/api/import', async(req, res) => {
     if (!req.body.session_key) res.sendStatus(401);
-    importer();
+    importer(req.body.session_key);
     res.redirect('/importer/ok');
   })
   .get('/proxy/user/:id', async(req, res) => {
