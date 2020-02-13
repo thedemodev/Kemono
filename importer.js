@@ -123,8 +123,7 @@ async function scraper(key, uri = 'https://api.patreon.com/stream?json-api-versi
         })
     })
   
-  // temporarily disabled
-  // indexer()
+  indexer();
   if (patreon.body.links.next && safeToLoop) {
     scraper(key, 'https://' + patreon.body.links.next)
     patreon = null;
