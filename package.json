@@ -6,7 +6,7 @@
   },
   "scripts": {
     "dev": "supervisor -i node_modules,public -n error server.js",
-    "start": "node server.js"
+    "start": "node --max-old-space-size=512 --inspect=0.0.0.0:9229 server.js"
   },
   "dependencies": {
     "bluebird": "^3.7.2",
@@ -21,7 +21,6 @@
     "get-urls": "^9.2.0",
     "is-image": "^3.0.0",
     "json-query": "^2.2.2",
-    "memory-cache": "^0.2.0",
     "mime": "^2.4.4",
     "nedb": "^1.8.0",
     "nedb-promise": "^2.0.1",

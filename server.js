@@ -3,7 +3,6 @@ const { posts, lookup } = require('./db');
 const { Worker } = require('worker_threads')
 const cloudscraper = require('cloudscraper').defaults({onCaptcha: require('./captcha')()});
 const bodyParser = require('body-parser');
-const cache = require('memory-cache');
 const express = require('express');
 const esc = require('escape-string-regexp')
 const compression = require('compression');
@@ -65,19 +64,18 @@ express()
   })
   .post('/api/import', async(req, res) => {
     if (!req.body.session_key) res.sendStatus(401);
-    const worker = new Worker('./importer.js', { workerData: req.body.session_key });
-    worker.on('error', (err) => console.log(`Importer thread died: ${err}`));
+    new Worker('./importer.js', { workerData: req.body.session_key });
     res.redirect('/importer/ok');
   })
   .get('/proxy/user/:id', async(req, res) => {
     let api = 'https://www.patreon.com/api/user';
-    if (!cache.get(req.params.id)) {
-      let options = cloudscraper.defaultParams;
-      options['json'] = true;
-      let user = await cloudscraper.get(`${api}/${req.params.id}`).catch(() => res.sendStatus(404));
-      await cache.put(req.params.id, user, 600000);
-    }
-    res.setHeader('Cache-Control', 'max-age=600, public');
-    res.json(cache.get(req.params.id));
+    let options = cloudscraper.defaultParams;
+    options['json'] = true;
+    cloudscraper.get(`${api}/${req.params.id}`, options)
+      .then(user => {
+        res.setHeader('Cache-Control', 'max-age=600, public');
+        res.json(user);
+      })
+      .catch(() => res.sendStatus(404));
   })
   .listen(process.env.PORT || 8080)

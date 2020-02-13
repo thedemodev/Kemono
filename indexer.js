@@ -1,7 +1,6 @@
 const Promise = require('bluebird');
 const cloudscraper = require('cloudscraper').defaults({onCaptcha: require('./captcha')()})
 const { posts, lookup } = require('./db');
-lookup.ensureIndex({fieldName: 'name'});
 async function indexer() {
   posts.loadDatabase();
   let postsData = await posts.cfind({}).sort({ added_at: -1 }).exec();
