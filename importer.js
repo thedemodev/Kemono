@@ -8,6 +8,7 @@ const cloudscraper2 = require('cloudscraper') // https://github.com/request/requ
     onCaptcha: require('./captcha')(),
     encoding: null
   });
+const { workerData } = require('worker_threads');
 const cd = require('content-disposition');
 const Promise = require('bluebird');
 const request = require('request-promise');
@@ -131,7 +132,5 @@ async function scraper(key, uri = 'https://api.patreon.com/stream?json-api-versi
   }
 }
 
-module.exports = (key) => {
-  posts.loadDatabase();
-  scraper(key);
-}
+posts.loadDatabase();
+scraper(workerData);
