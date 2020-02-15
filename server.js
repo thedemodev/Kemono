@@ -90,7 +90,7 @@ express()
     res.json(recentPosts);
   })
   .post('/api/import', async(req, res) => {
-    if (!req.body.session_key) res.sendStatus(401);
+    if (!req.body.session_key) return res.sendStatus(401);
     switch (req.body.service) {
       case 'patreon':
         new Worker('./importer.js', { workerData: req.body.session_key });
