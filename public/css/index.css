@@ -12,6 +12,10 @@ h1, h2, h3, p {
   border-radius: 10px;
 }
 
+.warning {
+  color: rgb(255, 255, 102);
+}
+
 .user-post-view h1, 
 .user-post-view h2, 
 .user-post-view h3, 
@@ -45,14 +49,31 @@ h1, h2, h3, p {
 
 .importer-form {
   width: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .search-input {
   margin-bottom: 5px;
 }
 
+.importer-select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-color: rgba(0, 0, 0, 0);
+  color: white;
+  border-color: #111;
+  border-radius: 5px;
+  font-family: Helvetica;
+  min-height: 32px;
+  text-align-last: center;
+}
+
+.importer-select:focus {
+  outline: none;
+}
+
 .importer-input {
-  width: 100%;
   border-radius: 5px;
   min-height: 32px;
   background-color: #282a2e;
@@ -132,6 +153,16 @@ h1, h2, h3, p {
   width: 25px;
   height: 25px;
   background-size: 25px;
+}
+
+.user-header-info-fanbox {
+  background-image: url(/fanbox.svg);
+  margin-top: 15px;
+  margin-left: 10px;
+  width: 50px;
+  height: 35px;
+  background-size: 50px;
+  background-repeat: no-repeat;
 }
 
 .user-post-view {

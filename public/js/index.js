@@ -5,7 +5,7 @@ async function searchUpdate() {
   const searchData = await fetch(`/api/lookup?q=${encodeURIComponent(query)}`);
   const results = await searchData.json();
   results.map(async(userId) => {
-    let userType = 'patreon' // change in future depending on user_type
+    let userType = 'Patreon'
     const userData = await fetch(`/proxy/user/${userId}`);
     const user = await userData.json();
     marthaView.innerHTML += `
@@ -25,6 +25,33 @@ async function searchUpdate() {
         </div>
       </div>
     `
+  })
+
+  const fanboxSearchData = await fetch(`/api/fanbox/lookup?q=${encodeURIComponent(query)}`);
+  const fanboxResults = await fanboxSearchData.json();
+  require(["https://unpkg.com/unraw@1.2.5/dist/index.min.js"], function(unraw) {
+    fanboxResults.map(async(userId) => {
+      let userType = 'Pixiv Fanbox'
+      const userData = await fetch(`/proxy/fanbox/user/${userId}`);
+      const user = await userData.json();
+      marthaView.innerHTML += `
+        <div class="recent-row">
+          <div class="recent-row-container">
+            <a href="/fanbox/user/${userId}">
+            <div class="avatar" style="background-image: url('${unraw.unraw(user.body.creator.user.iconUrl)}');"></div>
+            </a>
+            <div style="display: inline-block">
+              <a class="link-reset" href="/fanbox/user/${userId}">
+                <p><b>${unraw.unraw(user.body.creator.user.name)}</b></p>
+              </
+              <a class="link-reset" href="/fanbox/user/${userId}">
+                <p>${userType}</p>
+              </a>
+            </div>
+          </div>
+        </div>
+      `
+    })
   })
 }
 

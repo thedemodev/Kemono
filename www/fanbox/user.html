@@ -2,15 +2,15 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <title>Kemono</title>
+    <title>...</title>
     <link rel="stylesheet" type="text/css" href="https://unpkg.com/normalize.css@8.0.1/normalize.css">
     <link rel="stylesheet" type="text/css" href="/css/index.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js"></script>
-    <script src="https://underscorejs.org/underscore-min.js"></script>
-    <script src="/js/index.js"></script>
+    <script src="/fanbox/js/user.js"></script>
   </head>
   <body>
     <div class="main">
+      <noscript>You need JavaScript to render user posts.</noscript>
       <div class="header">
         <a href="/" class="link-reset header-item">[Home]</a>
         <a href="/importer" class="link-reset header-item">[Importer]</a>
@@ -28,32 +28,7 @@
           [Donate]
         </a>
       </div>
-      <div class="martha-view">
-        <input
-          id="search-input"
-          type="text"
-          class="importer-input search-input"
-          placeholder="search for a user..."
-          autocomplete="off"
-          autocorrect="off"
-          autocapitalize="off"
-          spellcheck="false"
-        >
-        <div class="recent-view" id="recent-view">
-          <noscript>You need JavaScript to view recent posts.</noscript>
-        </div>
-      </div>
-      <div class="footer">
-        <p>Running
-          <a 
-            href="https://github.com/OpenYiff/Kemono"
-            target="_blank"
-            class="link-reset header-item"
-          >
-            Kemono
-          </a> 
-          v1.3
-        </p>
+      <div class="martha-view" id="martha-view">
       </div>
     </div>
   </body>

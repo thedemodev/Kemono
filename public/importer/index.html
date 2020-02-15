@@ -32,11 +32,15 @@
           enctype="application/x-www-form-urlencoded"
           method="post"
         >
+          <select class="importer-select" name="service">
+            <option value="patreon" selected>Patreon</option>
+            <option value="fanbox">Pixiv Fanbox</option>
+          </select>
           <input 
             type="text"
             class="importer-input"
             name="session_key"
-            placeholder="patreon session key"
+            placeholder="session key"
             autocomplete="off" 
             autocorrect="off" 
             autocapitalize="off" 
@@ -46,7 +50,15 @@
         </form>
       </div>
       <div class="footer">
-        <p>Your session key is used to scrape your Patreon feed. After downloading missing posts, the key is immediately discarded and never stored.</p>
+        <p class="warning">Pixiv Fanbox support is experimental. I may delete archives at any time. Embeds are NOT supported. Report issues in the Telegram.</p>
+        <a 
+          href="https://github.com/OpenYiff/Kemono/wiki/How-to-get-your-session-key" 
+          class="link-reset"
+          target="_blank"
+        >
+          Learn how to get your session key.
+        </a>
+        <p>Your session key is used to scrape paid posts from your feed. After downloading missing posts, the key is immediately discarded and never stored.</p>
         <p>Import reupload-sensitive creators at your own risk. You may want to wait a while between pledging and importing to avoid detection.</p>
         <p>If you're having trouble with the importer or you have specific archival needs, 
           <a href="mailto:admin@kemono.party?subject=Kemono" class="link-reset">contact me.</a>
