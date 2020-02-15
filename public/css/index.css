@@ -127,7 +127,7 @@ h1, h2, h3, p {
 
 .user-header-avatar {
   border-radius: 10px;
-  background-size: 100% auto;
+  background-size: cover;
   background-position: center;
   height: 100px; 
   width: 100px;
@@ -235,7 +235,7 @@ h1, h2, h3, p {
 
 .avatar {
   border-radius: 4px;
-  background-size: 100% auto;
+  background-size: cover;
   background-position: center;
   height: 32px; 
   width: 32px;
