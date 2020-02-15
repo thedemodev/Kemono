@@ -114,13 +114,17 @@ express()
   })
   .get('/proxy/fanbox/user/:id', async(req, res) => {
     let api = 'https://www.pixiv.net/ajax/fanbox/creator?userId';
-    let user = await request.get(`${api}=${req.params.id}`, { 
-      json: true, 
-      headers: {
-        'cookie': `PHPSESSID=${process.env.FANBOX_KEY}`
-      }
-    }).catch(() => res.sendStatus(404));
-    res.setHeader('Cache-Control', 'max-age=600, public');
-    res.json(user);
+    request
+      .get(`${api}=${req.params.id}`, { 
+        json: true, 
+        headers: {
+          'cookie': `PHPSESSID=${process.env.FANBOX_KEY}`
+        }
+      })
+      .then(user => {
+        res.setHeader('Cache-Control', 'max-age=600, public');
+        res.json(user);
+      })
+      .catch(() => res.sendStatus(404));
   })
   .listen(process.env.PORT || 8080)
