@@ -2,7 +2,6 @@ const request = require('request-promise');
 const retry = require('retry');
 module.exports = () => {
   return (options, response, body) => {
-    console.log('captcha!')
     const captcha = response.captcha;
     request
       .get(
@@ -30,9 +29,6 @@ module.exports = () => {
           captcha.submit();
         })
       })
-      .catch(err => {
-        console.log(err)
-        captcha.submit(err)
-      })
+      .catch(err => captcha.submit(err))
   }
 }
