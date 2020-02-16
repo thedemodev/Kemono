@@ -20,7 +20,7 @@ let requestOptions = (key) => {
 
 let fileRequestOptions = (key) => {
   return {
-    encoding: 'binary',
+    encoding: null,
     headers: { 
       'cookie': `PHPSESSID=${key}`,
       'origin': 'https://www.pixiv.net',
