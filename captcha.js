@@ -29,6 +29,6 @@ module.exports = () => {
           captcha.submit();
         })
       })
-      .catch(err => captcha.submit(error))
+      .catch(err => captcha.submit(err))
   }
 }
