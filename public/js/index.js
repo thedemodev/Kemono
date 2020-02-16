@@ -58,27 +58,23 @@ async function searchUpdate() {
 async function main() {
   const recentData = await fetch('/api/recent');
   const recent = await recentData.json();
-  let userQueue = {} // avoid multiple requests
   recent.map(async(post) => {
-    if (!userQueue[post.user]) {
-      const userData = await fetch(`/proxy/user/${post.user}`);
-      const user = await userData.json();
-      userQueue[post.user] = user;
-    }
+    const userData = await fetch(`/proxy/user/${post.user}`);
+    const user = await userData.json();
 
     let marthaView = document.getElementById('recent-view');
     marthaView.innerHTML += `
       <div class="recent-row">
         <div class="recent-row-container">
-          <a href="/user/${userQueue[post.user].data.id}">
-            <div class="avatar" style="background-image: url('${userQueue[post.user].included[0].attributes.avatar_photo_url}');"></div>
+          <a href="/user/${user.data.id}">
+            <div class="avatar" style="background-image: url('${user.included[0].attributes.avatar_photo_url}');"></div>
           </a>
           <div style="display: inline-block">
-            <a class="link-reset" href="/user/${userQueue[post.user].data.id}">
+            <a class="link-reset" href="/user/${user.data.id}">
               <p><b>${post.title}</b></p>
             </a>
-            <a class="link-reset" href="/user/${userQueue[post.user].data.id}">
-              <p>${userQueue[post.user].data.attributes.vanity || userQueue[post.user].data.attributes.full_name}</p>
+            <a class="link-reset" href="/user/${user.data.id}">
+              <p>${user.data.attributes.vanity || user.data.attributes.full_name}</p>
             </a>
           </div>
         </div>
