@@ -106,7 +106,7 @@ express()
     options['json'] = true;
     cloudscraper.get(`${api}/${req.params.id}`, options)
       .then(user => {
-        res.setHeader('Cache-Control', 'max-age=600, public');
+        res.setHeader('Cache-Control', 'max-age=600, public, stale-while-revalidate=3600');
         res.json(user);
       })
       .catch(() => res.sendStatus(404));
@@ -121,7 +121,7 @@ express()
         }
       })
       .then(user => {
-        res.setHeader('Cache-Control', 'max-age=600, public');
+        res.setHeader('Cache-Control', 'max-age=600, public, stale-while-revalidate=3600');
         res.json(user);
       })
       .catch(() => res.sendStatus(404));
