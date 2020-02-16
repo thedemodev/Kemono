@@ -50,7 +50,6 @@ express()
   })
   .get('/api/fanbox/lookup', async(req, res) => {
     if (!req.query.q || req.query.q.length > 35) return res.sendStatus(400)
-    lookup.loadDatabase();
     let index = await lookup.find({version: 2, service: 'fanbox'});
     let results = query(`[*name~/${esc(req.query.q)}/i].id`, {
       data: index,
