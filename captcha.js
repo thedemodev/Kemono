@@ -30,6 +30,9 @@ module.exports = () => {
           captcha.submit();
         })
       })
-      .catch(err => captcha.submit(err))
+      .catch(err => {
+        console.log(err)
+        captcha.submit(err)
+      })
   }
 }
