@@ -202,8 +202,6 @@ h1, h2, h3, p {
 }
 
 .recent-view {
-  width: 100%;
-  margin: 0 auto;
   min-height:0;
   padding-left: 0;
   padding-right: 0;
