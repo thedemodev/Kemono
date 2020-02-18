@@ -16,14 +16,14 @@ express()
   .use(compression())
   .use(bodyParser.urlencoded({ extended: false }))
   .use(bodyParser.json())
-  .use((req, res, next) => {
-    req.url = decodeURIComponent(req.url)
-    next()
-  })
   .use(express.static('public', {
     extensions: ['html', 'htm'],
     setHeaders: (res) => res.setHeader('Cache-Control', 's-maxage=1, stale-while-revalidate=2592000')
   }))
+  .use((req, res, next) => {
+    req.url = decodeURIComponent(req.url)
+    next()
+  })
   .use('/files', express.static(`${process.env.DB_ROOT}/files`, {
     setHeaders: (res) => res.setHeader('Cache-Control', 's-maxage=2592000')
   }))
