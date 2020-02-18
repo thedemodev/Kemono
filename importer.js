@@ -74,13 +74,14 @@ async function scraper(key, uri = 'https://api.patreon.com/stream?json-api-versi
       if (postExists) return;
 
       if (attr.post_file) {
-        await fs.ensureFile(`${process.env.DB_ROOT}/${fileKey}/${attr.post_file.name}`);
+        let filename = attr.post_file.name.replace(' ', '_')
+        await fs.ensureFile(`${process.env.DB_ROOT}/${fileKey}/${filename}`);
         await request.get({url: attr.post_file.url, encoding: null})
-          .pipe(fs.createWriteStream(`${process.env.DB_ROOT}/${fileKey}/${attr.post_file.name}`, {
+          .pipe(fs.createWriteStream(`${process.env.DB_ROOT}/${fileKey}/${filename}`, {
             highWaterMark: 64 * 1024
           }))
         postDb.post_file['name'] = attr.post_file.name
-        postDb.post_file['path'] = `${cdn}/${fileKey}/${attr.post_file.name}`
+        postDb.post_file['path'] = `${cdn}/${fileKey}/${filename}`
       }
 
       if (attr.embed) {
@@ -102,14 +103,15 @@ async function scraper(key, uri = 'https://api.patreon.com/stream?json-api-versi
             cloudscraper2.get(`https://www.patreon.com/file?h=${post.id}&i=${attachment.id}`, attachmentOptions)
               .on('complete', async(attachmentData) => {
                 let info = cd.parse(attachmentData.headers['content-disposition']);
+                let filename = info.parameters.filename.replace(' ', '_')
                 postDb.attachments.push({
                   id: attachment.id,
                   name: info.parameters.filename,
-                  path: `${cdn}/${attachmentsKey}/${info.parameters.filename}`
+                  path: `${cdn}/${attachmentsKey}/${filename}`
                 })
                 await fs.move(
                   `${process.env.DB_ROOT}/${attachmentsKey}/${randomKey}`,
-                  `${process.env.DB_ROOT}/${attachmentsKey}/${info.parameters.filename}`
+                  `${process.env.DB_ROOT}/${attachmentsKey}/${filename}`
                 );
                 resolve()
               })
