@@ -131,5 +131,4 @@ async function scraper(key, uri = 'https://api.patreon.com/stream?json-api-versi
   }
 }
 
-module.exports = (key) => scraper(key)
-// scraper(workerData);
+scraper(workerData);
