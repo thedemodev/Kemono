@@ -36,8 +36,8 @@ const sanitizePostContent = async(content) => {
             content = content.replace(val, `https://kemono.party/inline/${filename}`);
             resolve();
           })
-          .pipe(fs.createWriteStream(`${process.env.DB_ROOT}/inline/${filename}`))
           .catch(() => resolve())
+          .pipe(fs.createWriteStream(`${process.env.DB_ROOT}/inline/${filename}`))
       })
     }
   })
