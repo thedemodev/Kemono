@@ -32,13 +32,12 @@ const sanitizePostContent = async(content) => {
       await fs.ensureFile(`${process.env.DB_ROOT}/inline/${filename}`);
       await new Promise(resolve => {
         request.get({url: val, encoding: null})
-          .catch(() => resolve())
           .on('complete', () => {
             content = content.replace(val, `https://kemono.party/inline/${filename}`);
             resolve();
           })
           .pipe(fs.createWriteStream(`${process.env.DB_ROOT}/inline/${filename}`))
-      })
+      }).catch(() => {})
     }
   })
   return content;
@@ -54,6 +53,9 @@ async function scraper(key, uri = 'https://api.patreon.com/stream?json-api-versi
   if (patreon.body.data.length == 0) safeToLoop = false;
   await Promise
     .mapSeries(patreon.body.data, async(post) => {
+      let postExists = await posts.findOne({id: post.id});
+      if (postExists) return;
+
       let attr = post.attributes;
       let rel = post.relationships;
       let cdn = 'https://kemono.party'
@@ -73,9 +75,6 @@ async function scraper(key, uri = 'https://api.patreon.com/stream?json-api-versi
         post_file: {},
         attachments: []
       };
-
-      let postExists = await posts.findOne({id: post.id});
-      if (postExists) return;
 
       if (attr.post_file) {
         let filename = attr.post_file.name.replace(/ /g, '_')
