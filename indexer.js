@@ -6,7 +6,7 @@ async function indexer() {
   posts
     .find({})
     .sort({ added_at: -1 })
-    .forEach(post => {
+    .forEach(async(post) => {
       let indexExists = await lookup.findOne({id: post.user});
       if (indexExists) return;
 
