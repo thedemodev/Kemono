@@ -30,6 +30,7 @@ const sanitizePostContent = async(content) => {
     if (isImage(url.origin + url.pathname)) {
       let imageMime = mime.getType(url.origin + url.pathname);
       let filename = new Date().getTime() + '.' + mime.getExtension(imageMime);
+      await fs.ensureFile(`${process.env.DB_ROOT}/inline/${filename}`);
       request.get({url: val, encoding: null})
         .pipe(fs.createWriteStream(`${process.env.DB_ROOT}/inline/${filename}`, {
           highWaterMark: 64 * 1024
