@@ -78,9 +78,7 @@ async function scraper(key, uri = 'https://api.patreon.com/stream?json-api-versi
         let filename = attr.post_file.name.replace(/ /g, '_')
         await fs.ensureFile(`${process.env.DB_ROOT}/${fileKey}/${filename}`);
         await request.get({url: attr.post_file.url, encoding: null})
-          .pipe(fs.createWriteStream(`${process.env.DB_ROOT}/${fileKey}/${filename}`, {
-            highWaterMark: 64 * 1024
-          }))
+          .pipe(fs.createWriteStream(`${process.env.DB_ROOT}/${fileKey}/${filename}`))
         postDb.post_file['name'] = attr.post_file.name
         postDb.post_file['path'] = `${cdn}/${fileKey}/${filename}`
       }
@@ -110,15 +108,13 @@ async function scraper(key, uri = 'https://api.patreon.com/stream?json-api-versi
                   name: info.parameters.filename,
                   path: `${cdn}/${attachmentsKey}/${filename}`
                 })
-                await fs.move(
+                await fs.rename(
                   `${process.env.DB_ROOT}/${attachmentsKey}/${randomKey}`,
                   `${process.env.DB_ROOT}/${attachmentsKey}/${filename}`
-                );
+                ).catch()
                 resolve()
               })
-              .pipe(fs.createWriteStream(`${process.env.DB_ROOT}/${attachmentsKey}/${randomKey}`, {
-                highWaterMark: 64 * 1024
-              }))
+              .pipe(fs.createWriteStream(`${process.env.DB_ROOT}/${attachmentsKey}/${randomKey}`))
           })   
         })
         .then(async() => {
