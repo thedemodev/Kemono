@@ -20,8 +20,7 @@ const getUrls = require('get-urls');
 const crypto = require('crypto');
 const sanitizePostContent = async(content) => {
   // mirror and replace any inline images
-  let contentToSanitize = content;
-  let urls = getUrls(contentToSanitize, {
+  let urls = getUrls(content, {
     sortQueryParameters: false,
     stripWWW: false
   });
@@ -31,14 +30,18 @@ const sanitizePostContent = async(content) => {
       let imageMime = mime.getType(url.origin + url.pathname);
       let filename = new Date().getTime() + '.' + mime.getExtension(imageMime);
       await fs.ensureFile(`${process.env.DB_ROOT}/inline/${filename}`);
-      request.get({url: val, encoding: null})
-        .pipe(fs.createWriteStream(`${process.env.DB_ROOT}/inline/${filename}`, {
-          highWaterMark: 64 * 1024
-        }))
-      contentToSanitize = contentToSanitize.replace(val, `https://kemono.party/inline/${filename}`);
+      await new Promise(resolve => {
+        request.get({url: val, encoding: null})
+          .on('complete', () => {
+            content = content.replace(val, `https://kemono.party/inline/${filename}`);
+            resolve();
+          })
+          .pipe(fs.createWriteStream(`${process.env.DB_ROOT}/inline/${filename}`))
+          .catch(() => resolve())
+      })
     }
   })
-  return contentToSanitize;
+  return content;
 }
 async function scraper(key, uri = 'https://api.patreon.com/stream?json-api-version=1.0') {
   let safeToLoop = true;
