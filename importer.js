@@ -119,7 +119,7 @@ async function scraper(key, uri = 'https://api.patreon.com/stream?json-api-versi
         })
         .then(async() => {
           await posts.insertOne(postDb)
-          posts.close();
+          await posts.close();
           postDb = null; // avoid memory leaks
         })
     })
