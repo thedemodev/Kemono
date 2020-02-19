@@ -6,7 +6,7 @@
   },
   "scripts": {
     "dev": "supervisor -i node_modules,public -n error server.js",
-    "start": "node --max-old-space-size=512 --inspect=0.0.0.0:9229 server.js"
+    "start": "node --inspect=0.0.0.0:9229 server.js"
   },
   "dependencies": {
     "bluebird": "^3.7.2",
