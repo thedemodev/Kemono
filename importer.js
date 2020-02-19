@@ -121,7 +121,7 @@ async function scraper(key, uri = 'https://api.patreon.com/stream?json-api-versi
           })   
         })
         .then(async() => {
-          await posts.insert(postDb)
+          await posts.insertOne(postDb)
           postDb = null; // avoid memory leaks
         })
     })
@@ -134,5 +134,4 @@ async function scraper(key, uri = 'https://api.patreon.com/stream?json-api-versi
   }
 }
 
-posts.loadDatabase();
 scraper(workerData);

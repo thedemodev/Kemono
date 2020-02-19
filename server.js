@@ -1,5 +1,4 @@
 require('dotenv').config()
-const fanboxImporter = require('./importers/fanbox/importer');
 const request = require('request-promise');
 const { posts, lookup } = require('./db');
 const { Worker } = require('worker_threads')
@@ -9,9 +8,8 @@ const express = require('express');
 const esc = require('escape-string-regexp')
 const compression = require('compression');
 const query = require('json-query');
-new Worker('./node_modules/nedb-multi/server.js', { env: { NEDB_MULTI_PORT: '40404' } })
 require('./indexer')()
-posts.ensureIndex({fieldName: 'user'});
+posts.createIndex({ user: 1 });
 express()
   .use(compression())
   .use(bodyParser.urlencoded({ extended: false }))
@@ -39,8 +37,7 @@ express()
   })
   .get('/api/lookup', async(req, res) => {
     if (!req.query.q || req.query.q.length > 35) return res.sendStatus(400)
-    lookup.loadDatabase();
-    let index = await lookup.find({version: 1});
+    let index = await lookup.find({version: 1}).toArray();
     let results = query(`[*name~/${esc(req.query.q)}/i].id`, {
       data: index,
       allowRegexp: true
@@ -50,7 +47,7 @@ express()
   })
   .get('/api/fanbox/lookup', async(req, res) => {
     if (!req.query.q || req.query.q.length > 35) return res.sendStatus(400)
-    let index = await lookup.find({version: 2, service: 'fanbox'});
+    let index = await lookup.find({version: 2, service: 'fanbox'}).toArray();
     let results = query(`[*name~/${esc(req.query.q)}/i].id`, {
       data: index,
       allowRegexp: true
@@ -59,32 +56,29 @@ express()
     res.json(results.value);
   })
   .get('/api/user/:id', async(req, res) => {
-    posts.loadDatabase();
-    let userPosts = await posts.cfind({ user: req.params.id, version: 1 })
+    let userPosts = await posts.find({ user: req.params.id, version: 1 })
       .sort({ published_at: -1 })
       .skip(Number(req.query.skip) || 0)
       .limit(Number(req.query.limit) || 25)
-      .exec();
+      .toArray();
     res.setHeader('Cache-Control', 's-maxage=1, stale-while-revalidate=2592000');
     res.json(userPosts);
   })
   .get('/api/fanbox/user/:id', async(req, res) => {
-    posts.loadDatabase();
-    let userPosts = await posts.cfind({ user: req.params.id, version: 2, service: 'fanbox' })
+    let userPosts = await posts.find({ user: req.params.id, version: 2, service: 'fanbox' })
       .sort({ published_at: -1 })
       .skip(Number(req.query.skip) || 0)
       .limit(Number(req.query.limit) || 25)
-      .exec();
+      .toArray();
     res.setHeader('Cache-Control', 's-maxage=1, stale-while-revalidate=2592000');
     res.json(userPosts);
   })
   .get('/api/recent', async(req, res) => {
-    posts.loadDatabase();
-    let recentPosts = await posts.cfind({ version: 1 })
+    let recentPosts = await posts.find({ version: 1 })
       .sort({ added_at: -1 })
       .skip(Number(req.query.skip) || 0)
       .limit(Number(req.query.limit) || 25)
-      .exec();
+      .toArray();
     res.setHeader('Cache-Control', 's-maxage=1, stale-while-revalidate=2592000');
     res.json(recentPosts);
   })

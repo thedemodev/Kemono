@@ -1,7 +1,7 @@
-const Datastore = require('./nedb-promise');
+const mongo = require('mongo-lazy-connect')(process.env.MONGO_URL, { useUnifiedTopology: true });
 const db = {
-  posts: new Datastore({ filename: `${process.env.DB_ROOT}/posts.db` }),
-  lookup: new Datastore({ filename: `${process.env.DB_ROOT}/lookup.db` })
+  posts: mongo.collection('posts'),
+  lookup: mongo.collection('lookup')
 };
 
 module.exports = db;

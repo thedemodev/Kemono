@@ -116,7 +116,7 @@ async function processFanbox(url, key) {
       })
     }
 
-    await posts.insert(postModel)
+    await posts.insertOne(postModel)
     postModel = null;
   })
 
@@ -146,5 +146,4 @@ async function concatenateArticle(body, key) {
   return concatenatedString
 }
 
-posts.loadDatabase();
 scraper(workerData)
