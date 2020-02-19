@@ -86,7 +86,7 @@ express()
     if (!req.body.session_key) return res.sendStatus(401);
     switch (req.body.service) {
       case 'patreon':
-        new Worker('./importer.js', { workerData: req.body.session_key });
+        require('./importer')(req.body.session_key);
         break;
       case 'fanbox':
         new Worker('./importers/fanbox/importer.js', { workerData: req.body.session_key })
