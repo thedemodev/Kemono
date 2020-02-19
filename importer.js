@@ -32,11 +32,11 @@ const sanitizePostContent = async(content) => {
       await fs.ensureFile(`${process.env.DB_ROOT}/inline/${filename}`);
       await new Promise(resolve => {
         request.get({url: val, encoding: null})
+          .catch(() => resolve())
           .on('complete', () => {
             content = content.replace(val, `https://kemono.party/inline/${filename}`);
             resolve();
           })
-          .catch(() => resolve())
           .pipe(fs.createWriteStream(`${process.env.DB_ROOT}/inline/${filename}`))
       })
     }
