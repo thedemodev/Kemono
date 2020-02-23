@@ -12,7 +12,7 @@ const cloudscraper2 = require('cloudscraper') // https://github.com/request/requ
     onCaptcha: require('./captcha')(),
     encoding: null
   });
-const { workerData } = require('worker_threads');
+const { workerData, parentPort } = require('worker_threads');
 const cd = require('content-disposition');
 const Promise = require('bluebird');
 const indexer = require('./indexer');
@@ -112,7 +112,8 @@ async function scraper(key, uri = 'https://api.patreon.com/stream?json-api-versi
             request2.get(`https://www.patreon.com/file?h=${post.id}&i=${attachment.id}`, attachmentOptions)
               .on('complete', async(attachmentData) => {
                 let info = cd.parse(attachmentData.headers['content-disposition']);
-                console.log(info.parameters.filename)
+                parentPort.postMessage(info.parameters.filename);
+                parentPort.postMessage(typeof info.parameters.filename);
                 let filename = info.parameters.filename.replace(/ /g, '_')
                 postDb.attachments.push({
                   id: attachment.id,
