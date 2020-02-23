@@ -45,9 +45,6 @@ async function processFanbox(url, key) {
     postItems = data.body; // nextUrl
     data = null;
   }
-
-  let safeToLoop = true;
-  if (postData.items.length == 0) safeToLoop = false;
   Promise.mapSeries(postData.items, async(post) => {
     if (!post.body) return // locked content; nothing to do
     let postModel = {
@@ -120,7 +117,7 @@ async function processFanbox(url, key) {
     postModel = null;
   })
 
-  if (postData.nextUrl && safeToLoop) {
+  if (postData.nextUrl) {
     processFanbox(postData.nextUrl, key)
     postData = null;
   } else {
