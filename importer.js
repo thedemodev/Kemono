@@ -1,15 +1,14 @@
 const { posts } = require('./db');
 const request = require('request');
 const request2 = require('request')
-  .defaults({ encoding: null, callback: () => {} });
+  .defaults({ encoding: null });
 const cloudscraper = require('cloudscraper')
   .defaults({
-    requester: request, // request-promise causes memory issues with downloads
     onCaptcha: require('./captcha')()
   });
 const cloudscraper2 = require('cloudscraper') // https://github.com/request/request/issues/2974
   .defaults({
-    requester: request,
+    requester: request, // request-promise causes memory issues with downloads
     onCaptcha: require('./captcha')(),
     encoding: null
   });
