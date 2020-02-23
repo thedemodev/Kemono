@@ -112,9 +112,7 @@ async function scraper(key, uri = 'https://api.patreon.com/stream?json-api-versi
             request2.get(`https://www.patreon.com/file?h=${post.id}&i=${attachment.id}`, attachmentOptions)
               .on('complete', async(attachmentData) => {
                 let info = cd.parse(attachmentData.headers['content-disposition']);
-                parentPort.postMessage(info.parameters.filename);
-                parentPort.postMessage(typeof info.parameters.filename);
-                let filename = info.parameters.filename.replace(/ /g, '_')
+                let filename = String(info.parameters.filename).replace(/ /g, '_')
                 postDb.attachments.push({
                   id: attachment.id,
                   name: info.parameters.filename,
