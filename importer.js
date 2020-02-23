@@ -1,12 +1,15 @@
 const { posts } = require('./db');
 const request = require('request');
+const request2 = require('request')
+  .defaults({ encoding: null });
 const cloudscraper = require('cloudscraper')
   .defaults({
+    requester: request, // request-promise causes memory issues with downloads
     onCaptcha: require('./captcha')()
   });
 const cloudscraper2 = require('cloudscraper') // https://github.com/request/request/issues/2974
   .defaults({
-    requester: request, // request-promise causes memory issues with downloads
+    requester: request,
     onCaptcha: require('./captcha')(),
     encoding: null
   });
@@ -107,7 +110,7 @@ async function scraper(key, uri = 'https://api.patreon.com/stream?json-api-versi
           let randomKey = crypto.randomBytes(20).toString('hex');
           await fs.ensureFile(`${process.env.DB_ROOT}/${attachmentsKey}/${randomKey}`);
           await new Promise(resolve => {
-            cloudscraper2.get(`https://www.patreon.com/file?h=${post.id}&i=${attachment.id}`, attachmentOptions)
+            request2.get(`https://www.patreon.com/file?h=${post.id}&i=${attachment.id}`, attachmentOptions)
               .on('complete', async(attachmentData) => {
                 let info = cd.parse(attachmentData.headers['content-disposition']);
                 let filename = info.parameters.filename.replace(/ /g, '_')
