@@ -4,6 +4,7 @@ const request2 = require('request')
   .defaults({ encoding: null });
 const cloudscraper = require('cloudscraper')
   .defaults({
+    callback: () => {},
     requester: request, // request-promise causes memory issues with downloads
     onCaptcha: require('./captcha')()
   });
