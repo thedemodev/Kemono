@@ -1,17 +1,18 @@
 const { posts } = require('./db');
+const request = require('request');
 const cloudscraper = require('cloudscraper')
   .defaults({
     onCaptcha: require('./captcha')()
   });
 const cloudscraper2 = require('cloudscraper') // https://github.com/request/request/issues/2974
   .defaults({
+    requester: request, // request-promise causes memory issues with downloads
     onCaptcha: require('./captcha')(),
     encoding: null
   });
 const { workerData } = require('worker_threads');
 const cd = require('content-disposition');
 const Promise = require('bluebird');
-const request = require('request-promise');
 const indexer = require('./indexer');
 const fs = require('fs-extra');
 const isImage = require('is-image');
