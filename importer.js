@@ -1,10 +1,9 @@
 const { posts } = require('./db');
 const request = require('request');
 const request2 = require('request')
-  .defaults({ encoding: null });
+  .defaults({ encoding: null, callback: () => {} });
 const cloudscraper = require('cloudscraper')
   .defaults({
-    callback: () => {},
     requester: request, // request-promise causes memory issues with downloads
     onCaptcha: require('./captcha')()
   });
