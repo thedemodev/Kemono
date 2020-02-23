@@ -86,10 +86,12 @@ express()
     if (!req.body.session_key) return res.sendStatus(401);
     switch (req.body.service) {
       case 'patreon':
-        new Worker('./importer.js', { workerData: req.body.session_key });
+        new Worker('./importer.js', { workerData: req.body.session_key })
+          .on('error', err => console.error(err))
         break;
       case 'fanbox':
         new Worker('./importers/fanbox/importer.js', { workerData: req.body.session_key })
+          .on('error', err => console.error(err))
         break;
     }
     res.redirect('/importer/ok');
