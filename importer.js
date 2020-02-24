@@ -1,18 +1,10 @@
 const { posts } = require('./db');
 const request = require('request');
-const request2 = require('request')
-  .defaults({ encoding: null });
 const cloudscraper = require('cloudscraper')
   .defaults({
     onCaptcha: require('./captcha')()
   });
-const cloudscraper2 = require('cloudscraper') // https://github.com/request/request/issues/2974
-  .defaults({
-    requester: request, // request-promise causes memory issues with downloads
-    onCaptcha: require('./captcha')(),
-    encoding: null
-  });
-const { workerData, parentPort } = require('worker_threads');
+const { workerData } = require('worker_threads');
 const cd = require('content-disposition');
 const Promise = require('bluebird');
 const indexer = require('./indexer');
@@ -52,12 +44,13 @@ const sanitizePostContent = async(content) => {
 }
 async function scraper(key, uri = 'https://api.patreon.com/stream?json-api-version=1.0') {
   let safeToLoop = true;
-  let options = cloudscraper.defaultParams;
-  options.headers['cookie'] = `session_id=${key}`;
-  options['resolveWithFullResponse'] = true;
-  options['json'] = true;
-
-  let patreon = await cloudscraper.get(uri, options)
+  let patreon = await cloudscraper.get(uri, {
+    resolveWithFullResponse: true,
+    json: true,
+    headers: {
+      'cookie': `session_id=${key}`
+    }
+  })
   if (patreon.body.data.length == 0) safeToLoop = false;
   await Promise
     .mapSeries(patreon.body.data, async(post) => {
@@ -102,17 +95,22 @@ async function scraper(key, uri = 'https://api.patreon.com/stream?json-api-versi
       Promise
         .mapSeries(rel.attachments.data, async(attachment) => {
           // use content disposition
-          let attachmentOptions = cloudscraper.defaultParams;
-          attachmentOptions['encoding'] = null;
-          attachmentOptions.headers['cookie'] = `session_id=${key}`;
-
           let randomKey = crypto.randomBytes(20).toString('hex');
           await fs.ensureFile(`${process.env.DB_ROOT}/${attachmentsKey}/${randomKey}`);
-          await new Promise(resolve => {
-            request2.get(`https://www.patreon.com/file?h=${post.id}&i=${attachment.id}`, attachmentOptions)
+          await new Promise(async(resolve) => {
+            let res = await cloudscraper.get({
+              url: `https://www.patreon.com/file?h=${post.id}&i=${attachment.id}`,
+              followRedirect: false,
+              followAllRedirects: false,
+              resolveWithFullResponse: true,
+              headers: {
+                'cookie': `session_id=${key}`
+              }
+            })
+            request.get({url: res.headers['location'], encoding: null})
               .on('complete', async(attachmentData) => {
                 let info = cd.parse(attachmentData.headers['content-disposition']);
-                let filename = String(info.parameters.filename).replace(/ /g, '_')
+                let filename = info.parameters.filename.replace(/ /g, '_')
                 postDb.attachments.push({
                   id: attachment.id,
                   name: info.parameters.filename,
