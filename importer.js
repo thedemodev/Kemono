@@ -103,6 +103,7 @@ async function scraper(key, uri = 'https://api.patreon.com/stream?json-api-versi
               followRedirect: false,
               followAllRedirects: false,
               resolveWithFullResponse: true,
+              simple: false,
               headers: {
                 'cookie': `session_id=${key}`
               }
