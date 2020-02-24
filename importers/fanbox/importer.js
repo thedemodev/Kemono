@@ -3,7 +3,7 @@ const { workerData } = require('worker_threads');
 const indexer = require('../../indexer');
 const fs = require('fs-extra');
 const request = require('request-promise');
-const request2 = require('request-promise')
+const request2 = require('request')
   .defaults({ encoding: null })
 const { unraw } = require('unraw');
 const nl2br = require('nl2br');
@@ -78,9 +78,7 @@ async function processFanbox(url, key) {
           postModel.post_file['path'] = `${filesLocation}/${post.user.userId}/${post.id}/${image.id}.${image.extension}`
         } else {
           request2.get(unraw(image.originalUrl), fileRequestOptions(key))
-            .pipe(fs.createWriteStream(`${process.env.DB_ROOT}/fanbox/attachments/${post.user.userId}/${post.id}/${image.id}.${image.extension}`, {
-              highWaterMark: 64 * 1024
-            }))
+            .pipe(fs.createWriteStream(`${process.env.DB_ROOT}/fanbox/attachments/${post.user.userId}/${post.id}/${image.id}.${image.extension}`))
           postModel.attachments.push({
             id: image.id,
             name: `${image.id}.${image.extension}`,
@@ -101,9 +99,7 @@ async function processFanbox(url, key) {
           postModel.post_file['path'] = `${filesLocation}/${post.user.userId}/${post.id}/${image.id}.${image.extension}`
         } else {
           request2.get(unraw(file.url), fileRequestOptions(key))
-            .pipe(fs.createWriteStream(`${process.env.DB_ROOT}/fanbox/attachments/${post.user.userId}/${post.id}/${file.name}.${file.extension}`, {
-              highWaterMark: 64 * 1024
-            }))
+            .pipe(fs.createWriteStream(`${process.env.DB_ROOT}/fanbox/attachments/${post.user.userId}/${post.id}/${file.name}.${file.extension}`))
           postModel.attachments.push({
             id: file.id,
             name: `${file.name}.${file.extension}`,
@@ -131,9 +127,7 @@ async function concatenateArticle(body, key) {
     if (block.type == 'image') {
       let imageInfo = body.imageMap[block.imageId];
       request2.get(unraw(imageInfo.originalUrl), fileRequestOptions(key))
-        .pipe(fs.createWriteStream(`${process.env.DB_ROOT}/fanbox/inline/${imageInfo.id}.${imageInfo.extension}`, {
-          highWaterMark: 64 * 1024
-        }))
+        .pipe(fs.createWriteStream(`${process.env.DB_ROOT}/fanbox/inline/${imageInfo.id}.${imageInfo.extension}`))
       concatenatedString += `<img src="https://kemono.party/fanbox/inline/${imageInfo.id}.${imageInfo.extension}"><br>`
     } else if (block.type == 'p') {
       concatenatedString += `${unraw(block.text)}<br>`
