@@ -19,12 +19,21 @@ async function indexer() {
       })
     } else if (post.version == 2 && post.service == 'fanbox') {
       let api = 'https://www.pixiv.net/ajax/fanbox/creator?userId';
-      let user = await request.get(`${api}=${post.user}`);
+      let user = await request.get(`${api}=${post.user}`, { json: true });
       lookup.insertOne({
         version: post.version,
         service: 'fanbox',
         id: post.user,
         name: unraw(user.body.creator.user.name)
+      })
+    } else if (post.version == 2 && post.service == 'gumroad') { 
+      let api = 'https://kemono.party/proxy/gumroad/user';
+      let user = await request.get(`${api}/${post.user}`, { json: true });
+      lookup.insertOne({
+        version: post.version,
+        service: 'gumroad',
+        id: post.user,
+        name: user.name
       })
     }
   });

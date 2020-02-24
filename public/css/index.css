@@ -165,6 +165,15 @@ h1, h2, h3, p {
   background-repeat: no-repeat;
 }
 
+.user-header-info-gumroad {
+  background-image: url(/gumroad.svg);
+  margin-top: 15px;
+  margin-left: 10px;
+  width: 25px;
+  height: 26px;
+  background-size: 25px;
+}
+
 .user-post-view {
   margin-top: 5px;
   min-height:0;

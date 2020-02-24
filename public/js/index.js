@@ -27,6 +27,31 @@ async function searchUpdate() {
     `
   })
 
+  const gumroadSearchData = await fetch(`/api/gumroad/lookup?q=${encodeURIComponent(query)}`);
+  const gumroadResults = await gumroadSearchData.json();
+  gumroadResults.map(async(userId) => {
+    let userType = 'Gumroad'
+    const userData = await fetch(`/proxy/gumroad/user/${userId}`);
+    const user = await userData.json();
+    marthaView.innerHTML += `
+      <div class="recent-row">
+        <div class="recent-row-container">
+          <a href="/gumroad/user/${userId}">
+          <div class="avatar" style="background-image: url('${user.avatar}');"></div>
+          </a>
+          <div style="display: inline-block">
+            <a class="link-reset" href="/gumroad/user/${userId}">
+              <p><b>${user.name}</b></p>
+            </
+            <a class="link-reset" href="/gumroad/user/${userId}">
+              <p>${userType}</p>
+            </a>
+          </div>
+        </div>
+      </div>
+    `
+  })
+
   const fanboxSearchData = await fetch(`/api/fanbox/lookup?q=${encodeURIComponent(query)}`);
   const fanboxResults = await fanboxSearchData.json();
   require(["https://unpkg.com/unraw@1.2.5/dist/index.min.js"], function(unraw) {
