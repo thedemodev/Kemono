@@ -1,4 +1,9 @@
 Kemono is an open-source reimplementation of [yiff.party](https://yiff.party/) built for speed and reliability. Scraping is performed asynchronously, and as of v1.3, the server only needs 20MB of working memory to function.
+### Supported Sites
+- Patreon
+- Gumroad
+- Pixiv Fanbox *(experimental)*
+
 ### Running
 The source code for Kemono is provided as-is, and I have no plans to make a customizable self-host version. You can obviously still do it, but your mileage may vary and you will need to change things in the source.
 
