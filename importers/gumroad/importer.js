@@ -7,6 +7,7 @@ const mime = require('mime');
 const crypto = require('crypto');
 const request = require('request');
 const request2 = require('request').defaults({encoding: null});
+const indexer = require('../../indexer');
 const cloudscraper = require('cloudscraper')
   .defaults({
     onCaptcha: require('../../captcha')()
@@ -50,7 +51,7 @@ async function scraper(key) {
       }
     }
   })
-  Promise.map(data.products, async(product) => {
+  await Promise.map(data.products, async(product) => {
     let postExists = await posts.findOne({id: product.id, service: 'gumroad'});
     if (postExists) return;
 
@@ -123,6 +124,8 @@ async function scraper(key) {
 
     posts.insertOne(model);
   })
+
+  indexer();
 }
 
 scraper(workerData);
