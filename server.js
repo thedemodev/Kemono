@@ -99,7 +99,7 @@ express()
     res.json(userPosts);
   })
   .get('/api/recent', async(req, res) => {
-    let recentPosts = await posts.find({ version: 1 })
+    let recentPosts = await posts.find({})
       .sort({ added_at: -1 })
       .skip(Number(req.query.skip) || 0)
       .limit(Number(req.query.limit) || 25)

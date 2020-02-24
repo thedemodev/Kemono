@@ -84,27 +84,51 @@ async function main() {
   const recentData = await fetch('/api/recent');
   const recent = await recentData.json();
   recent.map(async(post) => {
-    const userData = await fetch(`/proxy/user/${post.user}`);
-    const user = await userData.json();
+    if (post.version == 1) {
+      const userData = await fetch(`/proxy/user/${post.user}`);
+      const user = await userData.json();
 
-    let marthaView = document.getElementById('recent-view');
-    marthaView.innerHTML += `
-      <div class="recent-row">
-        <div class="recent-row-container">
-          <a href="/user/${user.data.id}">
-            <div class="avatar" style="background-image: url('${user.included[0].attributes.avatar_photo_url}');"></div>
-          </a>
-          <div style="display: inline-block">
-            <a class="link-reset" href="/user/${user.data.id}">
-              <p><b>${post.title}</b></p>
+      let marthaView = document.getElementById('recent-view');
+      marthaView.innerHTML += `
+        <div class="recent-row">
+          <div class="recent-row-container">
+            <a href="/user/${user.data.id}">
+              <div class="avatar" style="background-image: url('${user.included[0].attributes.avatar_photo_url}');"></div>
             </a>
-            <a class="link-reset" href="/user/${user.data.id}">
-              <p>${user.data.attributes.vanity || user.data.attributes.full_name}</p>
-            </a>
+            <div style="display: inline-block">
+              <a class="link-reset" href="/user/${user.data.id}">
+                <p><b>${post.title}</b></p>
+              </a>
+              <a class="link-reset" href="/user/${user.data.id}">
+                <p>${user.data.attributes.vanity || user.data.attributes.full_name}</p>
+              </a>
+            </div>
           </div>
         </div>
-      </div>
-    `
+      `
+    } else if (post.version == 2 && post.service == 'gumroad') {
+      const userData = await fetch(`/proxy/gumroad/user/${post.user}`);
+      const user = await userData.json();
+
+      let marthaView = document.getElementById('recent-view');
+      marthaView.innerHTML += `
+        <div class="recent-row">
+          <div class="recent-row-container">
+            <a href="/gumroad/user/${post.user}">
+              <div class="avatar" style="background-image: url('${user.avatar}');"></div>
+            </a>
+            <div style="display: inline-block">
+              <a class="link-reset" href="/gumroad/user/${post.user}">
+                <p><b>${post.title}</b></p>
+              </a>
+              <a class="link-reset" href="/gumroad/user/${post.user}">
+                <p>${user.name}</p>
+              </a>
+            </div>
+          </div>
+        </div>
+      `
+    }
   });
   document.getElementById('search-input').addEventListener('keyup', _.debounce(searchUpdate, 350))
 }
