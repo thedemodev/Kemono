@@ -108,7 +108,6 @@ async function scraper(key, uri = 'https://api.patreon.com/stream?json-api-versi
                 'cookie': `session_id=${key}`
               }
             }).catch(() => {})
-            console.log(res.headers['location'])
             request.get({url: res.headers['location'], encoding: null})
               .on('complete', async(attachmentData) => {
                 let info = cd.parse(attachmentData.headers['content-disposition']);
