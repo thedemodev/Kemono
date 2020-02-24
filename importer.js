@@ -19,7 +19,7 @@ const sanitizePostContent = async(content) => {
     sortQueryParameters: false,
     stripWWW: false
   });
-  await Promise.mapSeries(urls, async(val) => {
+  await Promise.map(urls, async(val) => {
     let url = new URL(val);
     if (isImage(url.origin + url.pathname)) {
       let imageMime = mime.getType(url.origin + url.pathname);
@@ -53,7 +53,7 @@ async function scraper(key, uri = 'https://api.patreon.com/stream?json-api-versi
   })
   if (patreon.body.data.length == 0) safeToLoop = false;
   await Promise
-    .mapSeries(patreon.body.data, async(post) => {
+    .map(patreon.body.data, async(post) => {
       let postExists = await posts.findOne({id: post.id});
       if (postExists) return;
 
@@ -93,7 +93,7 @@ async function scraper(key, uri = 'https://api.patreon.com/stream?json-api-versi
       }
 
       Promise
-        .mapSeries(rel.attachments.data, async(attachment) => {
+        .map(rel.attachments.data, async(attachment) => {
           // use content disposition
           let randomKey = crypto.randomBytes(20).toString('hex');
           await fs.ensureFile(`${process.env.DB_ROOT}/${attachmentsKey}/${randomKey}`);
@@ -128,13 +128,11 @@ async function scraper(key, uri = 'https://api.patreon.com/stream?json-api-versi
         })
         .then(async() => {
           await posts.insertOne(postDb)
-          postDb = null; // avoid memory leaks
         })
     })
   
   if (patreon.body.links.next && safeToLoop) {
     scraper(key, 'https://' + patreon.body.links.next)
-    patreon = null;
   } else {
     indexer();
   }
