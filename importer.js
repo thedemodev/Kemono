@@ -65,7 +65,7 @@ async function scraper(key, uri = 'https://api.patreon.com/stream?json-api-versi
 
       let postDb = {
         version: 1,
-        title: attr.title,
+        title: attr.title || '',
         content: await sanitizePostContent(attr.content),
         id: post.id,
         user: rel.user.data.id,
