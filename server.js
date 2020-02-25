@@ -117,6 +117,7 @@ express()
       case 'fanbox':
         new Worker('./importers/fanbox/importer.js', { workerData: req.body.session_key })
           .on('error', err => console.error(err))
+          .on('message', msg => console.log(msg)) // logging
         break;
       case 'gumroad':
         new Worker('./importers/gumroad/importer.js', { workerData: req.body.session_key })
