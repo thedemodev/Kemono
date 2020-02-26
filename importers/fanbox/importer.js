@@ -53,7 +53,7 @@ async function processFanbox(url, key) {
       version: 2,
       service: 'fanbox',
       title: unraw(post.title),
-      content: nl2br(unraw(post.body.text || concatenateArticle(post.body, key))),
+      content: nl2br(unraw(post.body.text || await concatenateArticle(post.body, key))),
       id: post.id,
       user: post.user.userId,
       post_type: post.type, // image, article, embed (undocumented) or file
@@ -123,6 +123,7 @@ async function processFanbox(url, key) {
 
 async function concatenateArticle(body, key) {
   let concatenatedString = '<p>';
+  parentPort.postMessage(JSON.stringify(body))
   await Promise.mapSeries(body.blocks, async(block) => {
     if (block.type == 'image') {
       let imageInfo = body.imageMap[block.imageId];
