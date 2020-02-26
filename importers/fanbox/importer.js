@@ -134,7 +134,7 @@ async function concatenateArticle(body, key) {
     } else if (block.type == 'p') {
       concatenatedString += `${unraw(block.text)}<br>`
     }
-  })
+  }).catch(err => parentPort.postMessage(err))
   concatenatedString += '</p>'
   return concatenatedString
 }
