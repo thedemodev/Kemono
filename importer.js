@@ -13,6 +13,7 @@ const isImage = require('is-image');
 const mime = require('mime')
 const getUrls = require('get-urls');
 const crypto = require('crypto');
+const hasha = require('hasha');
 const sanitizePostContent = async(content) => {
   // mirror and replace any inline images
   let urls = getUrls(content, {
@@ -54,23 +55,31 @@ async function scraper(key, uri = 'https://api.patreon.com/stream?json-api-versi
   if (patreon.body.data.length == 0) safeToLoop = false;
   await Promise
     .map(patreon.body.data, async(post) => {
-      let postExists = await posts.findOne({id: post.id});
-      if (postExists) return;
-
       let attr = post.attributes;
       let rel = post.relationships;
       let cdn = 'https://kemono.party'
       let fileKey = `files/${rel.user.data.id}/${post.id}`
       let attachmentsKey = `attachments/${rel.user.data.id}/${post.id}`
 
+      let existingPosts = await posts.find({id: post.id}).toArray();
+      if (existingPosts.length && existingPosts[0].version === 1) {
+        return;
+      } else if (existingPosts.length && existingPosts[existingPosts.length-1].edited_at === attr.edited_at) {
+        return;
+      } else if (existingPosts.length && existingPosts[existingPosts.length-1].edited_at !== attr.edited_at) {
+        fileKey = `files/edits/${rel.user.data.id}/${post.id}/${hasha(attr.edited_at)}`
+        attachmentsKey = `files/edits/${rel.user.data.id}/${post.id}/${hasha(attr.edited_at)}`
+      }
+
       let postDb = {
-        version: 1,
+        version: 3,
         title: attr.title || '',
         content: await sanitizePostContent(attr.content),
         id: post.id,
         user: rel.user.data.id,
         post_type: attr.post_type,
         published_at: attr.published_at,
+        edited_at: attr.edited_at,
         added_at: new Date().getTime(),
         embed: {},
         post_file: {},
