@@ -63,11 +63,11 @@ async function searchUpdate() {
         <div class="recent-row">
           <div class="recent-row-container">
             <a href="/fanbox/user/${userId}">
-            <div class="avatar" style="background-image: url('${unraw.unraw(user.body.creator.user.iconUrl)}');"></div>
+            <div class="avatar" style="background-image: url('${unraw.unraw(user.body.user.iconUrl)}');"></div>
             </a>
             <div style="display: inline-block">
               <a class="link-reset" href="/fanbox/user/${userId}">
-                <p><b>${unraw.unraw(user.body.creator.user.name)}</b></p>
+                <p><b>${unraw.unraw(user.body.user.name)}</b></p>
               </
               <a class="link-reset" href="/fanbox/user/${userId}">
                 <p>${userType}</p>
@@ -138,14 +138,14 @@ async function main() {
               <div class="recent-row">
                 <div class="recent-row-container">
                   <a href="/fanbox/user/${post.user}">
-                    <div class="avatar" style="background-image: url('${unraw.unraw(user.body.creator.user.iconUrl)}');"></div>
+                    <div class="avatar" style="background-image: url('${unraw.unraw(user.body.user.iconUrl)}');"></div>
                   </a>
                   <div style="display: inline-block">
                     <a class="link-reset" href="/fanbox/user/${post.user}">
                       <p><b>${post.title}</b></p>
                     </a>
                     <a class="link-reset" href="/fanbox/user/${post.user}">
-                      <p>${unraw.unraw(user.body.creator.user.name)}</p>
+                      <p>${unraw.unraw(user.body.user.name)}</p>
                     </a>
                   </div>
                 </div>
