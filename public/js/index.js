@@ -128,6 +128,30 @@ async function main() {
           </div>
         </div>
       `
+    } else if (post.version == 2 && post.service == 'fanbox') {
+      require(["https://unpkg.com/unraw@1.2.5/dist/index.min.js"], function(unraw) {
+        const userData = await fetch(`/proxy/fanbox/user/${post.user}`);
+        const user = await userData.json();
+
+        let marthaView = document.getElementById('recent-view');
+        marthaView.innerHTML += `
+          <div class="recent-row">
+            <div class="recent-row-container">
+              <a href="/fanbox/user/${post.user}">
+                <div class="avatar" style="background-image: url('${unraw.unraw(user.body.creator.user.iconUrl)}');"></div>
+              </a>
+              <div style="display: inline-block">
+                <a class="link-reset" href="/fanbox/user/${post.user}">
+                  <p><b>${post.title}</b></p>
+                </a>
+                <a class="link-reset" href="/fanbox/user/${post.user}">
+                  <p>${unraw.unraw(user.body.creator.user.name)}</p>
+                </a>
+              </div>
+            </div>
+          </div>
+        `
+      })
     }
   });
   document.getElementById('search-input').addEventListener('keyup', _.debounce(searchUpdate, 350))
