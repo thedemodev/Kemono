@@ -129,28 +129,30 @@ async function main() {
         </div>
       `
     } else if (post.version == 2 && post.service == 'fanbox') {
-      require(["https://unpkg.com/unraw@1.2.5/dist/index.min.js"], async(unraw) => {
-        const userData = await fetch(`/proxy/fanbox/user/${post.user}`);
-        const user = await userData.json();
-
-        let marthaView = document.getElementById('recent-view');
-        marthaView.innerHTML += `
-          <div class="recent-row">
-            <div class="recent-row-container">
-              <a href="/fanbox/user/${post.user}">
-                <div class="avatar" style="background-image: url('${unraw.unraw(user.body.creator.user.iconUrl)}');"></div>
-              </a>
-              <div style="display: inline-block">
-                <a class="link-reset" href="/fanbox/user/${post.user}">
-                  <p><b>${post.title}</b></p>
-                </a>
-                <a class="link-reset" href="/fanbox/user/${post.user}">
-                  <p>${unraw.unraw(user.body.creator.user.name)}</p>
-                </a>
+      require(["https://unpkg.com/unraw@1.2.5/dist/index.min.js"], function(unraw) {
+        fetch(`/proxy/fanbox/user/${post.user}`)
+          .then(userData => userData.json())
+          .then(user => {
+            let marthaView = document.getElementById('recent-view');
+            marthaView.innerHTML += `
+              <div class="recent-row">
+                <div class="recent-row-container">
+                  <a href="/fanbox/user/${post.user}">
+                    <div class="avatar" style="background-image: url('${unraw.unraw(user.body.creator.user.iconUrl)}');"></div>
+                  </a>
+                  <div style="display: inline-block">
+                    <a class="link-reset" href="/fanbox/user/${post.user}">
+                      <p><b>${post.title}</b></p>
+                    </a>
+                    <a class="link-reset" href="/fanbox/user/${post.user}">
+                      <p>${unraw.unraw(user.body.creator.user.name)}</p>
+                    </a>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
-        `
+            `
+          })
+          
       })
     }
   });
