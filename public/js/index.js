@@ -129,7 +129,7 @@ async function main() {
         </div>
       `
     } else if (post.version == 2 && post.service == 'fanbox') {
-      require(["https://unpkg.com/unraw@1.2.5/dist/index.min.js"], function(unraw) {
+      require(["https://unpkg.com/unraw@1.2.5/dist/index.min.js"], async(unraw) => {
         const userData = await fetch(`/proxy/fanbox/user/${post.user}`);
         const user = await userData.json();
 
