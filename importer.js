@@ -73,6 +73,7 @@ async function scraper(key, uri = 'https://api.patreon.com/stream?json-api-versi
 
       let postDb = {
         version: 3,
+        service: 'patreon',
         title: attr.title || '',
         content: await sanitizePostContent(attr.content),
         id: post.id,
