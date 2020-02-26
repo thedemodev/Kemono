@@ -12,7 +12,7 @@ async function indexer() {
     if (post.version == 1) { // patreon
       let api = 'https://www.patreon.com/api/user';
       let user = await cloudscraper.get(`${api}/${post.user}`, { json: true })
-      lookup.insertOne({
+      await lookup.insertOne({
         version: post.version,
         id: post.user,
         name: user.data.attributes.vanity || user.data.attributes.full_name
@@ -25,7 +25,7 @@ async function indexer() {
           'origin': 'https://www.pixiv.net'
         } 
       });
-      lookup.insertOne({
+      await lookup.insertOne({
         version: post.version,
         service: 'fanbox',
         id: post.user,
@@ -34,7 +34,7 @@ async function indexer() {
     } else if (post.version == 2 && post.service == 'gumroad') { 
       let api = 'https://kemono.party/proxy/gumroad/user';
       let user = await request.get(`${api}/${post.user}`, { json: true });
-      lookup.insertOne({
+      await lookup.insertOne({
         version: post.version,
         service: 'gumroad',
         id: post.user,
