@@ -66,18 +66,18 @@ async function main() {
   const userData = await fetch(`/proxy/fanbox/user/${pathname[3]}`);
   const user = await userData.json();
   require(["https://unpkg.com/unraw@1.2.5/dist/index.min.js"], function(unraw) {
-    document.title = `${unraw.unraw(user.body.creator.user.name)} | kemono`
+    document.title = `${unraw.unraw(user.body.user.name)} | kemono`
     let marthaView = document.getElementById('martha-view');
     marthaView.innerHTML += `
       <div 
         class="user-header-view" 
-        style="background: url('${unraw.unraw(user.body.creator.coverImageUrl)}'); background-size: 100% auto; background-position: center;"
+        style="background: url('${unraw.unraw(user.body.coverImageUrl)}'); background-size: 100% auto; background-position: center;"
       >
-        <div class="user-header-avatar" style="background-image: url('${unraw.unraw(user.body.creator.user.iconUrl)}');"></div>
+        <div class="user-header-avatar" style="background-image: url('${unraw.unraw(user.body.user.iconUrl)}');"></div>
         <div class="user-header-info">
           <div class="user-header-info-top">
-            <h1>${unraw.unraw(user.body.creator.user.name)}</h1>
-            <a href="https://www.pixiv.net/fanbox/creator/${user.body.creator.user.userId}" target="_blank" rel="noreferrer">
+            <h1>${unraw.unraw(user.body.user.name)}</h1>
+            <a href="https://www.pixiv.net/fanbox/creator/${user.body.user.userId}" target="_blank" rel="noreferrer">
               <div class="user-header-info-fanbox"></div>
             </a>
           </div>
