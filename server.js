@@ -74,7 +74,7 @@ express()
     res.json(results.value);
   })
   .get('/api/user/:id', async(req, res) => {
-    let userPosts = await posts.find({ user: req.params.id, version: 1 })
+    let userPosts = await posts.find({ user: req.params.id })
       .sort({ published_at: -1 })
       .skip(Number(req.query.skip) || 0)
       .limit(Number(req.query.limit) || 25)
