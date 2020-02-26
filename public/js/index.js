@@ -84,7 +84,7 @@ async function main() {
   const recentData = await fetch('/api/recent');
   const recent = await recentData.json();
   recent.map(async(post) => {
-    if (post.version == 1) {
+    if (post.version == 1 || post.service == 'patreon') {
       const userData = await fetch(`/proxy/user/${post.user}`);
       const user = await userData.json();
 
@@ -106,7 +106,7 @@ async function main() {
           </div>
         </div>
       `
-    } else if (post.version == 2 && post.service == 'gumroad') {
+    } else if (post.service == 'gumroad') {
       const userData = await fetch(`/proxy/gumroad/user/${post.user}`);
       const user = await userData.json();
 
@@ -128,7 +128,7 @@ async function main() {
           </div>
         </div>
       `
-    } else if (post.version == 2 && post.service == 'fanbox') {
+    } else if (post.service == 'fanbox') {
       require(["https://unpkg.com/unraw@1.2.5/dist/index.min.js"], function(unraw) {
         fetch(`/proxy/fanbox/user/${post.user}`)
           .then(userData => userData.json())
