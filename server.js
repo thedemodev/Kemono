@@ -138,11 +138,12 @@ express()
       .catch(() => res.sendStatus(404));
   })
   .get('/proxy/fanbox/user/:id', async(req, res) => {
-    let api = 'https://www.pixiv.net/ajax/fanbox/creator?userId';
+    let api = 'https://fanbox.pixiv.net/api/creator.get?userId';
     request
       .get(`${api}=${req.params.id}`, { 
         json: true, 
         headers: {
+          'origin': 'https://www.pixiv.net',
           'cookie': `PHPSESSID=${process.env.FANBOX_KEY}`
         }
       })
