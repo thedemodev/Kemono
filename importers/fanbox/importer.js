@@ -72,13 +72,13 @@ async function processFanbox(url, key) {
     if (post.body.images) {
       await Promise.mapSeries(post.body.images, async(image, index) => {
         if (index == 0 && !postModel.post_file['name']) {
+          await fs.ensureFile(`${process.env.DB_ROOT}/files/fanbox/${post.user.userId}/${post.id}/${image.id}.${image.extension}`);
           request2.get(unraw(image.originalUrl), fileRequestOptions(key))
-            .pipe(fs.createWriteStream(`${process.env.DB_ROOT}/files/fanbox/${post.user.userId}/${post.id}/${image.id}.${image.extension}`, {
-              highWaterMark: 64 * 1024
-            }))
+            .pipe(fs.createWriteStream(`${process.env.DB_ROOT}/files/fanbox/${post.user.userId}/${post.id}/${image.id}.${image.extension}`))
           postModel.post_file['name'] = `${image.id}.${image.extension}`
           postModel.post_file['path'] = `${filesLocation}/${post.user.userId}/${post.id}/${image.id}.${image.extension}`
         } else {
+          await fs.ensureFile(`${process.env.DB_ROOT}/attachments/fanbox/${post.user.userId}/${post.id}/${image.id}.${image.extension}`);
           request2.get(unraw(image.originalUrl), fileRequestOptions(key))
             .pipe(fs.createWriteStream(`${process.env.DB_ROOT}/attachments/fanbox/${post.user.userId}/${post.id}/${image.id}.${image.extension}`))
           postModel.attachments.push({
@@ -93,11 +93,13 @@ async function processFanbox(url, key) {
     if (post.body.files) {
       await Promise.mapSeries(post.body.files, async(file, index) => {
         if (index == 0 && !postModel.post_file['name']) {
+          await fs.ensureFile(`${process.env.DB_ROOT}/files/fanbox/${post.user.userId}/${post.id}/${file.name}.${file.extension}`);
           request2.get(unraw(file.url), fileRequestOptions(key))
             .pipe(fs.createWriteStream(`${process.env.DB_ROOT}/files/fanbox/${post.user.userId}/${post.id}/${file.name}.${file.extension}`))
           postModel.post_file['name'] = `${file.name}.${file.extension}`
           postModel.post_file['path'] = `${filesLocation}/${post.user.userId}/${post.id}/${image.id}.${image.extension}`
         } else {
+          await fs.ensureFile(`${process.env.DB_ROOT}/attachments/fanbox/${post.user.userId}/${post.id}/${file.name}.${file.extension}`)
           request2.get(unraw(file.url), fileRequestOptions(key))
             .pipe(fs.createWriteStream(`${process.env.DB_ROOT}/attachments/fanbox/${post.user.userId}/${post.id}/${file.name}.${file.extension}`))
           postModel.attachments.push({
@@ -124,6 +126,7 @@ async function concatenateArticle(body, key) {
   await Promise.mapSeries(body.blocks, async(block) => {
     if (block.type == 'image') {
       let imageInfo = body.imageMap[block.imageId];
+      await fs.ensureFile(`${process.env.DB_ROOT}/inline/fanbox/${imageInfo.id}.${imageInfo.extension}`);
       request2.get(unraw(imageInfo.originalUrl), fileRequestOptions(key))
         .pipe(fs.createWriteStream(`${process.env.DB_ROOT}/inline/fanbox/${imageInfo.id}.${imageInfo.extension}`))
       concatenatedString += `<img src="https://kemono.party/inline/fanbox/${imageInfo.id}.${imageInfo.extension}"><br>`
