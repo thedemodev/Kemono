@@ -43,8 +43,7 @@ express()
   })
   .get('/api/lookup', async(req, res) => {
     if (!req.query.q || req.query.q.length > 35) return res.sendStatus(400)
-    let index2 = await lookup.find({ service: 'patreon' }).toArray();
-    let index = Object.assign(index1, index2)
+    let index = await lookup.find({ service: 'patreon' }).toArray();
     let results = query(`[*name~/${esc(req.query.q)}/i].id`, {
       data: index,
       allowRegexp: true
