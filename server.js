@@ -43,8 +43,7 @@ express()
   })
   .get('/api/lookup', async(req, res) => {
     if (!req.query.q || req.query.q.length > 35) return res.sendStatus(400)
-    let index1 = await lookup.find({version: 1}).toArray();
-    let index2 = await lookup.find({service: 'patreon'}).toArray();
+    let index2 = await lookup.find({ service: 'patreon' }).toArray();
     let index = Object.assign(index1, index2)
     let results = query(`[*name~/${esc(req.query.q)}/i].id`, {
       data: index,
@@ -55,7 +54,7 @@ express()
   })
   .get('/api/fanbox/lookup', async(req, res) => {
     if (!req.query.q || req.query.q.length > 35) return res.sendStatus(400)
-    let index = await lookup.find({version: 2, service: 'fanbox'}).toArray();
+    let index = await lookup.find({ service: 'fanbox' }).toArray();
     let results = query(`[*name~/${esc(req.query.q)}/i].id`, {
       data: index,
       allowRegexp: true
@@ -65,7 +64,7 @@ express()
   })
   .get('/api/gumroad/lookup', async(req, res) => {
     if (!req.query.q || req.query.q.length > 35) return res.sendStatus(400)
-    let index = await lookup.find({version: 2, service: 'gumroad'}).toArray();
+    let index = await lookup.find({ service: 'gumroad' }).toArray();
     let results = query(`[*name~/${esc(req.query.q)}/i].id`, {
       data: index,
       allowRegexp: true
@@ -83,7 +82,7 @@ express()
     res.json(userPosts);
   })
   .get('/api/fanbox/user/:id', async(req, res) => {
-    let userPosts = await posts.find({ user: req.params.id, version: 2, service: 'fanbox' })
+    let userPosts = await posts.find({ user: req.params.id, service: 'fanbox' })
       .sort({ published_at: -1 })
       .skip(Number(req.query.skip) || 0)
       .limit(Number(req.query.limit) || 25)
@@ -92,7 +91,7 @@ express()
     res.json(userPosts);
   })
   .get('/api/gumroad/user/:id', async(req, res) => {
-    let userPosts = await posts.find({ user: req.params.id, version: 2, service: 'gumroad' })
+    let userPosts = await posts.find({ user: req.params.id, service: 'gumroad' })
       .sort({ published_at: -1 })
       .skip(Number(req.query.skip) || 0)
       .limit(Number(req.query.limit) || 25)
