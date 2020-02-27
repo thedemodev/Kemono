@@ -194,6 +194,7 @@ h1, h2, h3, p {
 
 .user-post-view p {
   line-height: 20px;
+  word-break: break-all;
 }
 
 .user-post-view a {
