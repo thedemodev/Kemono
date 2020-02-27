@@ -30,9 +30,9 @@ let fileRequestOptions = (key) => {
 
 async function scraper(key) {
   parentPort.postMessage('fanbox scraper fired!');
-  let fanboxIndex = await request.get('https://www.pixiv.net/ajax/fanbox/index', requestOptions(key));
+  let fanboxIndex = await request.get('https://fanbox.pixiv.net/api/plan.listSupporting', requestOptions(key));
   Promise.mapSeries(fanboxIndex.body.supportingPlans, async(artist) => {
-    processFanbox(`https://www.pixiv.net/ajax/fanbox/creator?userId=${artist.user.userId}`, key)
+    processFanbox(`https://fanbox.pixiv.net/api/post.listCreator?userId=${artist.user.userId}&limit=100`, key)
   });
 }
 
@@ -46,7 +46,7 @@ async function processFanbox(url, key) {
     postData = data.body; // nextUrl
     data = null;
   }
-  Promise.mapSeries(postData.items, async(post) => {
+  await Promise.mapSeries(postData.items, async(post) => {
     parentPort.postMessage(post);
     if (!post.body) return // locked content; nothing to do
     let postModel = {
