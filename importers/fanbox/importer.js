@@ -37,7 +37,9 @@ async function scraper(key) {
 }
 
 async function processFanbox(url, key) {
+  let safeToLoop = true;
   let data = await request.get(unraw(url), requestOptions(key));
+  if (data.body.items == 0) safeToLoop = false;
   await Promise.mapSeries(data.body.items, async(post) => {
     parentPort.postMessage(post);
     if (!post.body) return // locked content; nothing to do
@@ -106,7 +108,7 @@ async function processFanbox(url, key) {
     await posts.insertOne(postModel)
   })
 
-  if (data.body.nextUrl) {
+  if (data.body.nextUrl && safeToLoop) {
     processFanbox(postData.nextUrl, key)
   } else {
     indexer();
