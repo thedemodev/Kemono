@@ -88,12 +88,14 @@ async function scraper(key, uri = 'https://api.patreon.com/stream?json-api-versi
     };
 
     if (attr.post_file) {
-      let filename = slugify(attr.post_file.name, { lowercase: false });
-      await fs.ensureFile(`${process.env.DB_ROOT}/${fileKey}/${filename}`);
+      let fileBits = attr.post_file.name.split('.');
+      let filename = slugify(fileBits[0], { lowercase: false });
+      let ext = fileBits[fileBits.length-1];
+      await fs.ensureFile(`${process.env.DB_ROOT}/${fileKey}/${filename}.${ext}`);
       await request.get({url: attr.post_file.url, encoding: null})
-        .pipe(fs.createWriteStream(`${process.env.DB_ROOT}/${fileKey}/${filename}`))
+        .pipe(fs.createWriteStream(`${process.env.DB_ROOT}/${fileKey}/${filename}.${ext}`))
       postDb.post_file['name'] = attr.post_file.name
-      postDb.post_file['path'] = `${cdn}/${fileKey}/${filename}`
+      postDb.post_file['path'] = `${cdn}/${fileKey}/${filename}.${ext}`
     }
 
     if (attr.embed) {
@@ -120,15 +122,17 @@ async function scraper(key, uri = 'https://api.patreon.com/stream?json-api-versi
         request.get({url: res.headers['location'], encoding: null})
           .on('complete', async(attachmentData) => {
             let info = cd.parse(attachmentData.headers['content-disposition']);
-            let filename = slugify(info.parameters.filename, { lowercase: false });
+            let fileBits = info.parameters.filename.split('.');
+            let filename = slugify(fileBits[0], { lowercase: false });
+            let ext = fileBits[fileBits.length-1];
             postDb.attachments.push({
               id: attachment.id,
               name: info.parameters.filename,
-              path: `${cdn}/${attachmentsKey}/${filename}`
+              path: `${cdn}/${attachmentsKey}/${filename}.${ext}`
             })
             await fs.rename(
               `${process.env.DB_ROOT}/${attachmentsKey}/${randomKey}`,
-              `${process.env.DB_ROOT}/${attachmentsKey}/${filename}`
+              `${process.env.DB_ROOT}/${attachmentsKey}/${filename}.${ext}`
             ).catch()
             resolve()
           })
@@ -146,13 +150,15 @@ async function scraper(key, uri = 'https://api.patreon.com/stream?json-api-versi
 
     await Promise.map(postData.body.included, async(includedFile, i) => {
       if (i === 0) return;
-      let filename = slugify(includedFile.attributes.file_name, { lowercase: false });
-      await fs.ensureFile(`${process.env.DB_ROOT}/${attachmentsKey}/${filename}`);
+      let fileBits = includedFile.attributes.file_name.split('.');
+      let filename = slugify(fileBits[0], { lowercase: false });
+      let ext = fileBits[fileBits.length-1];
+      await fs.ensureFile(`${process.env.DB_ROOT}/${attachmentsKey}/${filename}.${ext}`);
       request.get({url: includedFile.attributes.download_url, encoding: null})
-        .pipe(fs.createWriteStream(`${process.env.DB_ROOT}/${attachmentsKey}/${filename}`))
+        .pipe(fs.createWriteStream(`${process.env.DB_ROOT}/${attachmentsKey}/${filename}.${ext}`))
       postDb.attachments.push({
-        name: filename,
-        path: `${cdn}/${attachmentsKey}/${filename}`
+        name: includedFile.attributes.file_name,
+        path: `${cdn}/${attachmentsKey}/${filename}.${ext}`
       })
     }).catch(() => {})
 
