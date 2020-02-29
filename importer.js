@@ -155,7 +155,7 @@ async function scraper(key, uri = 'https://api.patreon.com/stream?json-api-versi
           name: filename,
           path: `${cdn}/${attachmentsKey}/${filename}`
         })
-      })
+      }).catch(() => {})
 
       await posts.insertOne(postDb)
     })
