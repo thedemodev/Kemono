@@ -5,6 +5,7 @@ const cloudscraper = require('cloudscraper')
     onCaptcha: require('./captcha')()
   });
 const { workerData } = require('worker_threads');
+const slugify = require('@sindresorhus/slugify');
 const cd = require('content-disposition');
 const Promise = require('bluebird');
 const indexer = require('./indexer');
@@ -88,7 +89,7 @@ async function scraper(key, uri = 'https://api.patreon.com/stream?json-api-versi
       };
 
       if (attr.post_file) {
-        let filename = attr.post_file.name.replace(/ /g, '_')
+        let filename = slugify(attr.post_file.name, { lowercase: false });
         await fs.ensureFile(`${process.env.DB_ROOT}/${fileKey}/${filename}`);
         await request.get({url: attr.post_file.url, encoding: null})
           .pipe(fs.createWriteStream(`${process.env.DB_ROOT}/${fileKey}/${filename}`))
@@ -120,7 +121,7 @@ async function scraper(key, uri = 'https://api.patreon.com/stream?json-api-versi
           request.get({url: res.headers['location'], encoding: null})
             .on('complete', async(attachmentData) => {
               let info = cd.parse(attachmentData.headers['content-disposition']);
-              let filename = info.parameters.filename.replace(/ /g, '_')
+              let filename = slugify(info.parameters.filename, { lowercase: false });
               postDb.attachments.push({
                 id: attachment.id,
                 name: info.parameters.filename,
@@ -146,7 +147,7 @@ async function scraper(key, uri = 'https://api.patreon.com/stream?json-api-versi
 
       await Promise.map(postData.body.included, async(includedFile, i) => {
         if (i === 0) return;
-        let filename = includedFile.attributes.file_name.replace(/ /g, '_')
+        let filename = slugify(includedFile.attributes.file_name, { lowercase: false });
         await fs.ensureFile(`${process.env.DB_ROOT}/${attachmentsKey}/${filename}`);
         request.get({url: includedFile.attributes.download_url, encoding: null})
           .pipe(fs.createWriteStream(`${process.env.DB_ROOT}/${attachmentsKey}/${filename}`))

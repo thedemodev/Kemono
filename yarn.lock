@@ -2,6 +2,22 @@
 # yarn lockfile v1
 
 
+"@sindresorhus/slugify@^0.11.0":
+  version "0.11.0"
+  resolved "https://registry.yarnpkg.com/@sindresorhus/slugify/-/slugify-0.11.0.tgz#642acb99adefa4187285fd17de88745afc161de8"
+  integrity sha512-ECTZT6z1hYDsopRh8GECaQ5L6hoJHVd4uq5hPi8se9GB31tgtZfnlM8G64hZVhJNmtJ9eIK0SuNhtsaPQStXEQ==
+  dependencies:
+    "@sindresorhus/transliterate" "^0.1.0"
+    escape-string-regexp "^2.0.0"
+
+"@sindresorhus/transliterate@^0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@sindresorhus/transliterate/-/transliterate-0.1.0.tgz#c063bfc4102783fb19c91c2f8c1efb3adfb754be"
+  integrity sha512-bO6v0M0EuJPjm5Ntfow4nk+r3EZQ41n0ahvAmh766FzPqlm6V/2uDc01vZI3gLeI/1lgV2BTMb6QvxOk9z73ng==
+  dependencies:
+    escape-string-regexp "^2.0.0"
+    lodash.deburr "^4.1.0"
+
 "@types/cheerio@^0.22.15":
   version "0.22.16"
   resolved "https://registry.yarnpkg.com/@types/cheerio/-/cheerio-0.22.16.tgz#c748a97b8a6f781b04bbda4a552e11b35bcc77e4"
@@ -911,6 +927,11 @@ lodash.bind@^4.1.4:
   version "4.2.1"
   resolved "https://registry.yarnpkg.com/lodash.bind/-/lodash.bind-4.2.1.tgz#7ae3017e939622ac31b7d7d7dcb1b34db1690d35"
   integrity sha1-euMBfpOWIqwxt9fX3LGzTbFpDTU=
+
+lodash.deburr@^4.1.0:
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/lodash.deburr/-/lodash.deburr-4.1.0.tgz#ddb1bbb3ef07458c0177ba07de14422cb033ff9b"
+  integrity sha1-3bG7s+8HRYwBd7oH3hRCLLAz/5s=
 
 lodash.defaults@^4.0.1:
   version "4.2.0"

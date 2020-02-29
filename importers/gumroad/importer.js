@@ -7,6 +7,7 @@ const mime = require('mime');
 const crypto = require('crypto');
 const request = require('request');
 const request2 = require('request').defaults({encoding: null});
+const slugify = require('@sindresorhus/slugify');
 const indexer = require('../../indexer');
 const cloudscraper = require('cloudscraper')
   .defaults({
@@ -107,7 +108,7 @@ async function scraper(key) {
           .get(file.link, scrapeOptions(key))
           .on('complete', async(res) => {
             let ext = mime.getExtension(res.headers['content-type']);
-            let filename = file.filename.replace(/ /g, '_')
+            let filename = slugify(file.filename, { lowercase: false });
             model.attachments.push({
               name: `${filename}.${ext}`,
               path: `https://kemono.party/attachments/gumroad/${userId}/${product.id}/${filename}.${ext}`
