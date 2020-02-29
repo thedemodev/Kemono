@@ -102,43 +102,61 @@ async function scraper(key, uri = 'https://api.patreon.com/stream?json-api-versi
         postDb.embed['url'] = attr.embed.url;
       }
 
-      Promise
-        .map(rel.attachments.data, async(attachment) => {
-          // use content disposition
-          let randomKey = crypto.randomBytes(20).toString('hex');
-          await fs.ensureFile(`${process.env.DB_ROOT}/${attachmentsKey}/${randomKey}`);
-          await new Promise(async(resolve) => {
-            let res = await cloudscraper.get({
-              url: `https://www.patreon.com/file?h=${post.id}&i=${attachment.id}`,
-              followRedirect: false,
-              followAllRedirects: false,
-              resolveWithFullResponse: true,
-              simple: false,
-              headers: {
-                'cookie': `session_id=${key}`
-              }
-            })
-            request.get({url: res.headers['location'], encoding: null})
-              .on('complete', async(attachmentData) => {
-                let info = cd.parse(attachmentData.headers['content-disposition']);
-                let filename = info.parameters.filename.replace(/ /g, '_')
-                postDb.attachments.push({
-                  id: attachment.id,
-                  name: info.parameters.filename,
-                  path: `${cdn}/${attachmentsKey}/${filename}`
-                })
-                await fs.rename(
-                  `${process.env.DB_ROOT}/${attachmentsKey}/${randomKey}`,
-                  `${process.env.DB_ROOT}/${attachmentsKey}/${filename}`
-                ).catch()
-                resolve()
+      await Promise.map(rel.attachments.data, async(attachment) => {
+        // use content disposition
+        let randomKey = crypto.randomBytes(20).toString('hex');
+        await fs.ensureFile(`${process.env.DB_ROOT}/${attachmentsKey}/${randomKey}`);
+        await new Promise(async(resolve) => {
+          let res = await cloudscraper.get({
+            url: `https://www.patreon.com/file?h=${post.id}&i=${attachment.id}`,
+            followRedirect: false,
+            followAllRedirects: false,
+            resolveWithFullResponse: true,
+            simple: false,
+            headers: {
+              'cookie': `session_id=${key}`
+            }
+          })
+          request.get({url: res.headers['location'], encoding: null})
+            .on('complete', async(attachmentData) => {
+              let info = cd.parse(attachmentData.headers['content-disposition']);
+              let filename = info.parameters.filename.replace(/ /g, '_')
+              postDb.attachments.push({
+                id: attachment.id,
+                name: info.parameters.filename,
+                path: `${cdn}/${attachmentsKey}/${filename}`
               })
-              .pipe(fs.createWriteStream(`${process.env.DB_ROOT}/${attachmentsKey}/${randomKey}`))
-          })   
+              await fs.rename(
+                `${process.env.DB_ROOT}/${attachmentsKey}/${randomKey}`,
+                `${process.env.DB_ROOT}/${attachmentsKey}/${filename}`
+              ).catch()
+              resolve()
+            })
+            .pipe(fs.createWriteStream(`${process.env.DB_ROOT}/${attachmentsKey}/${randomKey}`))
+        })   
+      })
+
+      let postData = await cloudscraper.get(`https://www.patreon.com/api/posts/${post.id}?include=images.null,audio.null&json-api-use-default-includes=false&json-api-version=1.0`, {
+        resolveWithFullResponse: true,
+        json: true,
+        headers: {
+          'cookie': `session_id=${key}`
+        }
+      })
+
+      await Promise.map(postData.body.included, (includedFile, i) => {
+        if (i === 0) return;
+        let filename = includedFile.attributes.file_name.replace(/ /g, '_')
+        await fs.ensureFile(`${process.env.DB_ROOT}/${attachmentsKey}/${filename}`);
+        request.get({url: includedFile.attributes.download_url, encoding: null})
+          .pipe(fs.createWriteStream(`${process.env.DB_ROOT}/${attachmentsKey}/${filename}`))
+        postDb.attachments.push({
+          name: filename,
+          path: `${cdn}/${attachmentsKey}/${filename}`
         })
-        .then(async() => {
-          await posts.insertOne(postDb)
-        })
+      })
+
+      await posts.insertOne(postDb)
     })
   
   if (patreon.body.links.next && safeToLoop) {
