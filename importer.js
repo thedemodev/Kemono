@@ -54,111 +54,110 @@ async function scraper(key, uri = 'https://api.patreon.com/stream?json-api-versi
     }
   })
   if (patreon.body.data.length == 0) safeToLoop = false;
-  await Promise
-    .map(patreon.body.data, async(post) => {
-      let attr = post.attributes;
-      let rel = post.relationships;
-      let cdn = 'https://kemono.party'
-      let fileKey = `files/${rel.user.data.id}/${post.id}`
-      let attachmentsKey = `attachments/${rel.user.data.id}/${post.id}`
+  await Promise.map(patreon.body.data, async(post) => {
+    let attr = post.attributes;
+    let rel = post.relationships;
+    let cdn = 'https://kemono.party'
+    let fileKey = `files/${rel.user.data.id}/${post.id}`
+    let attachmentsKey = `attachments/${rel.user.data.id}/${post.id}`
 
-      let existingPosts = await posts.find({id: post.id}).toArray();
-      if (existingPosts.length && existingPosts[0].version === 1) {
-        return;
-      } else if (existingPosts.length && existingPosts[existingPosts.length-1].edited_at === attr.edited_at) {
-        return;
-      } else if (existingPosts.length && existingPosts[existingPosts.length-1].edited_at !== attr.edited_at) {
-        fileKey = `files/edits/${rel.user.data.id}/${post.id}/${hasha(attr.edited_at)}`
-        attachmentsKey = `files/edits/${rel.user.data.id}/${post.id}/${hasha(attr.edited_at)}`
-      }
+    let existingPosts = await posts.find({id: post.id}).toArray();
+    if (existingPosts.length && existingPosts[0].version === 1) {
+      return;
+    } else if (existingPosts.length && existingPosts[existingPosts.length-1].edited_at === attr.edited_at) {
+      return;
+    } else if (existingPosts.length && existingPosts[existingPosts.length-1].edited_at !== attr.edited_at) {
+      fileKey = `files/edits/${rel.user.data.id}/${post.id}/${hasha(attr.edited_at)}`
+      attachmentsKey = `files/edits/${rel.user.data.id}/${post.id}/${hasha(attr.edited_at)}`
+    }
 
-      let postDb = {
-        version: 3,
-        service: 'patreon',
-        title: attr.title || '',
-        content: await sanitizePostContent(attr.content),
-        id: post.id,
-        user: rel.user.data.id,
-        post_type: attr.post_type,
-        published_at: attr.published_at,
-        edited_at: attr.edited_at,
-        added_at: new Date().getTime(),
-        embed: {},
-        post_file: {},
-        attachments: []
-      };
+    let postDb = {
+      version: 3,
+      service: 'patreon',
+      title: attr.title || '',
+      content: await sanitizePostContent(attr.content),
+      id: post.id,
+      user: rel.user.data.id,
+      post_type: attr.post_type,
+      published_at: attr.published_at,
+      edited_at: attr.edited_at,
+      added_at: new Date().getTime(),
+      embed: {},
+      post_file: {},
+      attachments: []
+    };
 
-      if (attr.post_file) {
-        let filename = slugify(attr.post_file.name, { lowercase: false });
-        await fs.ensureFile(`${process.env.DB_ROOT}/${fileKey}/${filename}`);
-        await request.get({url: attr.post_file.url, encoding: null})
-          .pipe(fs.createWriteStream(`${process.env.DB_ROOT}/${fileKey}/${filename}`))
-        postDb.post_file['name'] = attr.post_file.name
-        postDb.post_file['path'] = `${cdn}/${fileKey}/${filename}`
-      }
+    if (attr.post_file) {
+      let filename = slugify(attr.post_file.name, { lowercase: false });
+      await fs.ensureFile(`${process.env.DB_ROOT}/${fileKey}/${filename}`);
+      await request.get({url: attr.post_file.url, encoding: null})
+        .pipe(fs.createWriteStream(`${process.env.DB_ROOT}/${fileKey}/${filename}`))
+      postDb.post_file['name'] = attr.post_file.name
+      postDb.post_file['path'] = `${cdn}/${fileKey}/${filename}`
+    }
 
-      if (attr.embed) {
-        postDb.embed['subject'] = attr.embed.subject;
-        postDb.embed['description'] = attr.embed.description;
-        postDb.embed['url'] = attr.embed.url;
-      }
+    if (attr.embed) {
+      postDb.embed['subject'] = attr.embed.subject;
+      postDb.embed['description'] = attr.embed.description;
+      postDb.embed['url'] = attr.embed.url;
+    }
 
-      await Promise.map(rel.attachments.data, async(attachment) => {
-        // use content disposition
-        let randomKey = crypto.randomBytes(20).toString('hex');
-        await fs.ensureFile(`${process.env.DB_ROOT}/${attachmentsKey}/${randomKey}`);
-        await new Promise(async(resolve) => {
-          let res = await cloudscraper.get({
-            url: `https://www.patreon.com/file?h=${post.id}&i=${attachment.id}`,
-            followRedirect: false,
-            followAllRedirects: false,
-            resolveWithFullResponse: true,
-            simple: false,
-            headers: {
-              'cookie': `session_id=${key}`
-            }
-          })
-          request.get({url: res.headers['location'], encoding: null})
-            .on('complete', async(attachmentData) => {
-              let info = cd.parse(attachmentData.headers['content-disposition']);
-              let filename = slugify(info.parameters.filename, { lowercase: false });
-              postDb.attachments.push({
-                id: attachment.id,
-                name: info.parameters.filename,
-                path: `${cdn}/${attachmentsKey}/${filename}`
-              })
-              await fs.rename(
-                `${process.env.DB_ROOT}/${attachmentsKey}/${randomKey}`,
-                `${process.env.DB_ROOT}/${attachmentsKey}/${filename}`
-              ).catch()
-              resolve()
-            })
-            .pipe(fs.createWriteStream(`${process.env.DB_ROOT}/${attachmentsKey}/${randomKey}`))
-        })   
-      })
-
-      let postData = await cloudscraper.get(`https://www.patreon.com/api/posts/${post.id}?include=images.null,audio.null&json-api-use-default-includes=false&json-api-version=1.0`, {
-        resolveWithFullResponse: true,
-        json: true,
-        headers: {
-          'cookie': `session_id=${key}`
-        }
-      })
-
-      await Promise.map(postData.body.included, async(includedFile, i) => {
-        if (i === 0) return;
-        let filename = slugify(includedFile.attributes.file_name, { lowercase: false });
-        await fs.ensureFile(`${process.env.DB_ROOT}/${attachmentsKey}/${filename}`);
-        request.get({url: includedFile.attributes.download_url, encoding: null})
-          .pipe(fs.createWriteStream(`${process.env.DB_ROOT}/${attachmentsKey}/${filename}`))
-        postDb.attachments.push({
-          name: filename,
-          path: `${cdn}/${attachmentsKey}/${filename}`
+    await Promise.map(rel.attachments.data, async(attachment) => {
+      // use content disposition
+      let randomKey = crypto.randomBytes(20).toString('hex');
+      await fs.ensureFile(`${process.env.DB_ROOT}/${attachmentsKey}/${randomKey}`);
+      await new Promise(async(resolve) => {
+        let res = await cloudscraper.get({
+          url: `https://www.patreon.com/file?h=${post.id}&i=${attachment.id}`,
+          followRedirect: false,
+          followAllRedirects: false,
+          resolveWithFullResponse: true,
+          simple: false,
+          headers: {
+            'cookie': `session_id=${key}`
+          }
         })
-      }).catch(() => {})
-
-      await posts.insertOne(postDb)
+        request.get({url: res.headers['location'], encoding: null})
+          .on('complete', async(attachmentData) => {
+            let info = cd.parse(attachmentData.headers['content-disposition']);
+            let filename = slugify(info.parameters.filename, { lowercase: false });
+            postDb.attachments.push({
+              id: attachment.id,
+              name: info.parameters.filename,
+              path: `${cdn}/${attachmentsKey}/${filename}`
+            })
+            await fs.rename(
+              `${process.env.DB_ROOT}/${attachmentsKey}/${randomKey}`,
+              `${process.env.DB_ROOT}/${attachmentsKey}/${filename}`
+            ).catch()
+            resolve()
+          })
+          .pipe(fs.createWriteStream(`${process.env.DB_ROOT}/${attachmentsKey}/${randomKey}`))
+      })   
     })
+
+    let postData = await cloudscraper.get(`https://www.patreon.com/api/posts/${post.id}?include=images.null,audio.null&json-api-use-default-includes=false&json-api-version=1.0`, {
+      resolveWithFullResponse: true,
+      json: true,
+      headers: {
+        'cookie': `session_id=${key}`
+      }
+    })
+
+    await Promise.map(postData.body.included, async(includedFile, i) => {
+      if (i === 0) return;
+      let filename = slugify(includedFile.attributes.file_name, { lowercase: false });
+      await fs.ensureFile(`${process.env.DB_ROOT}/${attachmentsKey}/${filename}`);
+      request.get({url: includedFile.attributes.download_url, encoding: null})
+        .pipe(fs.createWriteStream(`${process.env.DB_ROOT}/${attachmentsKey}/${filename}`))
+      postDb.attachments.push({
+        name: filename,
+        path: `${cdn}/${attachmentsKey}/${filename}`
+      })
+    }).catch(() => {})
+
+    await posts.insertOne(postDb)
+  })
   
   if (patreon.body.links.next && safeToLoop) {
     scraper(key, 'https://' + patreon.body.links.next)
