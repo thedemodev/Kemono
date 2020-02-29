@@ -144,7 +144,7 @@ async function scraper(key, uri = 'https://api.patreon.com/stream?json-api-versi
         }
       })
 
-      await Promise.map(postData.body.included, (includedFile, i) => {
+      await Promise.map(postData.body.included, async(includedFile, i) => {
         if (i === 0) return;
         let filename = includedFile.attributes.file_name.replace(/ /g, '_')
         await fs.ensureFile(`${process.env.DB_ROOT}/${attachmentsKey}/${filename}`);
