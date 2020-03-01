@@ -21,12 +21,15 @@ express()
     setHeaders: (res) => res.setHeader('Cache-Control', 's-maxage=1, stale-while-revalidate=2592000')
   }))
   .use('/files', express.static(`${process.env.DB_ROOT}/files`, {
+    dotfiles: 'allow',
     setHeaders: (res) => res.setHeader('Cache-Control', 's-maxage=2592000')
   }))
   .use('/attachments', express.static(`${process.env.DB_ROOT}/attachments`, {
+    dotfiles: 'allow',
     setHeaders: (res) => res.setHeader('Cache-Control', 's-maxage=2592000')
   }))
   .use('/inline', express.static(`${process.env.DB_ROOT}/inline`, {
+    dotfiles: 'allow',
     setHeaders: (res) => res.setHeader('Cache-Control', 's-maxage=2592000')
   }))
   .get('/user/:id', (req, res) => {
