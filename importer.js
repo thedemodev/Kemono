@@ -17,7 +17,7 @@ const crypto = require('crypto');
 const hasha = require('hasha');
 const sanitizePostContent = async(content) => {
   // mirror and replace any inline images
-  if (!content) return;
+  if (!content) return '';
   let urls = getUrls(content, {
     sortQueryParameters: false,
     stripWWW: false
