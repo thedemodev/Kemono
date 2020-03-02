@@ -21,7 +21,7 @@ const sanitizePostContent = async(content) => {
     sortQueryParameters: false,
     stripWWW: false
   });
-  await Promise.map(urls, async(val) => {
+  await Promise.mapSeries(urls, async(val) => {
     let url = new URL(val);
     if (isImage(url.origin + url.pathname)) {
       let imageMime = mime.getType(url.origin + url.pathname);
