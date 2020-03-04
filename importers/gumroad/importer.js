@@ -7,7 +7,7 @@ const mime = require('mime');
 const crypto = require('crypto');
 const request = require('request');
 const request2 = require('request').defaults({encoding: null});
-const slugify = require('@sindresorhus/slugify');
+const { slugify } = require('transliteration');
 const indexer = require('../../indexer');
 const cloudscraper = require('cloudscraper')
   .defaults({

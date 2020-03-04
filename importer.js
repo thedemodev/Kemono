@@ -5,7 +5,7 @@ const cloudscraper = require('cloudscraper')
     onCaptcha: require('./captcha')()
   });
 const { workerData } = require('worker_threads');
-const slugify = require('@sindresorhus/slugify');
+const { slugify } = require('transliteration');
 const cd = require('content-disposition');
 const Promise = require('bluebird');
 const indexer = require('./indexer');
