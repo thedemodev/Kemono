@@ -28,8 +28,13 @@ h1, h2, h3, p {
 }
 
 .link-reset {
-  text-decoration: none;
+  text-decoration: underline;
   color: #fff;
+}
+
+.link-reset-warning {
+  text-decoration: underline;
+  color: rgb(255, 255, 102);
 }
 
 .header {
