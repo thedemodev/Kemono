@@ -190,6 +190,7 @@ h1, h2, h3, p {
   justify-content: center;
   color: #fff;
   font-family: Helvetica;
+  word-break: break-word;
 }
 
 .load-more-button {
