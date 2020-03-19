@@ -46,33 +46,45 @@ express()
   })
   .get('/api/lookup', async(req, res) => {
     if (!req.query.q || req.query.q.length > 35) return res.sendStatus(400)
-    let index = await lookup.find({ service: 'patreon' }).limit(50).toArray();
-    let results = query(`[*name~/${esc(req.query.q)}/i].id`, {
-      data: index,
-      allowRegexp: true
-    });
+    let index = await lookup
+      .find({
+        service: 'patreon',
+        name: {
+          $regex: esc(req.query.q),
+          $options: 'i'
+        }
+      })
+      .toArray();
     res.setHeader('Cache-Control', 's-maxage=10, stale-while-revalidate=2592000');
-    res.json(results.value);
+    res.json(index);
   })
   .get('/api/fanbox/lookup', async(req, res) => {
-    if (!req.query.q || req.query.q.length > 35) return res.sendStatus(400)
-    let index = await lookup.find({ service: 'fanbox' }).limit(50).toArray();
-    let results = query(`[*name~/${esc(req.query.q)}/i].id`, {
-      data: index,
-      allowRegexp: true
-    });
+    if (!req.query.q || req.query.q.length > 35) return res.sendStatus(400);
+    let index = await lookup
+      .find({
+        service: 'fanbox',
+        name: {
+          $regex: esc(req.query.q),
+          $options: 'i'
+        }
+      })
+      .toArray();
     res.setHeader('Cache-Control', 's-maxage=10, stale-while-revalidate=2592000');
-    res.json(results.value);
+    res.json(index);
   })
   .get('/api/gumroad/lookup', async(req, res) => {
-    if (!req.query.q || req.query.q.length > 35) return res.sendStatus(400)
-    let index = await lookup.find({ service: 'gumroad' }).limit(50).toArray();
-    let results = query(`[*name~/${esc(req.query.q)}/i].id`, {
-      data: index,
-      allowRegexp: true
-    });
+    if (!req.query.q || req.query.q.length > 35) return res.sendStatus(400);
+    let index = await lookup
+      .find({
+        service: 'gumroad',
+        name: {
+          $regex: esc(req.query.q),
+          $options: 'i'
+        }
+      })
+      .toArray();
     res.setHeader('Cache-Control', 's-maxage=10, stale-while-revalidate=2592000');
-    res.json(results.value);
+    res.json(index);
   })
   .get('/api/user/:id', async(req, res) => {
     let userPosts = await posts.find({ user: req.params.id })
