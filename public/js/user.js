@@ -82,9 +82,9 @@ async function main() {
       </div>
     </div>
   `
-}
-document.getElementById('martha-view').innerHTML += `
+  marthaView.innerHTML += `
     <button onClick="loadMorePosts(26)" id="load-more-button" class="load-more-button">Load More</a>
-`
+  `
+  loadMorePosts(0)
+}
 main()
-loadMorePosts(0)
