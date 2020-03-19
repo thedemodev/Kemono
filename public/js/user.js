@@ -61,29 +61,27 @@ async function loadMorePosts(skip) {
 
 async function main() {
   let pathname = window.location.pathname.split('/')
+  const userData = await fetch(`/proxy/user/${pathname[2]}`);
+  const user = await userData.json();
+  document.title = `${user.data.attributes.vanity || user.data.attributes.full_name} | kemono`
   let marthaView = document.getElementById('martha-view');
-  fetch(`/proxy/user/${pathname[2]}`)
-    .then(data => data.json())
-    .then(user => {
-      document.title = `${user.data.attributes.vanity || user.data.attributes.full_name} | kemono`
-      marthaView.innerHTML += `
-        <div 
-          class="user-header-view" 
-          style="background: url('${user.included[0].attributes.cover_photo_url}'); background-size: 100% auto; background-position: center;"
-        >
-          <div class="user-header-avatar" style="background-image: url('${user.included[0].attributes.avatar_photo_url}');"></div>
-          <div class="user-header-info">
-            <div class="user-header-info-top">
-              <h1>${user.data.attributes.vanity || user.data.attributes.full_name}</h1>
-              <a href="https://www.patreon.com/user?u=${user.data.id}" target="_blank" rel="noreferrer">
-                <div class="user-header-info-patreon"></div>
-              </a>
-            </div>
-            <p>${user.included[0].attributes.creation_name}</p>
-          </div>
+  marthaView.innerHTML += `
+    <div 
+      class="user-header-view" 
+      style="background: url('${user.included[0].attributes.cover_photo_url}'); background-size: 100% auto; background-position: center;"
+    >
+      <div class="user-header-avatar" style="background-image: url('${user.included[0].attributes.avatar_photo_url}');"></div>
+      <div class="user-header-info">
+        <div class="user-header-info-top">
+          <h1>${user.data.attributes.vanity || user.data.attributes.full_name}</h1>
+          <a href="https://www.patreon.com/user?u=${user.data.id}" target="_blank" rel="noreferrer">
+            <div class="user-header-info-patreon"></div>
+          </a>
         </div>
-      `
-    })
+        <p>${user.included[0].attributes.creation_name}</p>
+      </div>
+    </div>
+  `
   marthaView.innerHTML += `
     <button onClick="loadMorePosts(26)" id="load-more-button" class="load-more-button">Load More</a>
   `
