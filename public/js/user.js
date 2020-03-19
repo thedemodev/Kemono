@@ -83,5 +83,8 @@ async function main() {
     </div>
   `
 }
+marthaView.innerHTML += `
+    <button onClick="loadMorePosts(26)" id="load-more-button" class="load-more-button">Load More</a>
+`
 main()
 loadMorePosts(0)
