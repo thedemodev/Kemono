@@ -9,7 +9,6 @@ const bodyParser = require('body-parser');
 const express = require('express');
 const esc = require('escape-string-regexp')
 const compression = require('compression');
-const query = require('json-query');
 require('./indexer')()
 posts.createIndex({ user: 1 });
 express()
