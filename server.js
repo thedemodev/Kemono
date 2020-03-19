@@ -53,6 +53,8 @@ express()
           $options: 'i'
         }
       })
+      .limit(50)
+      .map(user => user.id)
       .toArray();
     res.setHeader('Cache-Control', 's-maxage=10, stale-while-revalidate=2592000');
     res.json(index);
@@ -67,6 +69,8 @@ express()
           $options: 'i'
         }
       })
+      .limit(50)
+      .map(user => user.id)
       .toArray();
     res.setHeader('Cache-Control', 's-maxage=10, stale-while-revalidate=2592000');
     res.json(index);
@@ -81,6 +85,8 @@ express()
           $options: 'i'
         }
       })
+      .limit(50)
+      .map(user => user.id)
       .toArray();
     res.setHeader('Cache-Control', 's-maxage=10, stale-while-revalidate=2592000');
     res.json(index);
