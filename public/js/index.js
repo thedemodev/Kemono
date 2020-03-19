@@ -81,7 +81,6 @@ async function searchUpdate() {
 }
 
 async function main() {
-  let marthaView = document.getElementById('recent-view');
   const recentData = await fetch('/api/recent');
   const recent = await recentData.json();
   recent.map(async(post) => {
@@ -95,7 +94,7 @@ async function main() {
               <a class="link-reset" href="/user/${post.user}">
                 <p><b>${post.title}</b></p>
               </a>
-              <a class="link-reset" href="/user/${user.data.id}" id="post-${post.id}-username"></a>
+              <a class="link-reset" href="/user/${post.user}" id="post-${post.id}-username"></a>
             </div>
           </div>
         </div>
@@ -118,7 +117,7 @@ async function main() {
               <a class="link-reset" href="/gumroad/user/${post.user}">
                 <p><b>${post.title}</b></p>
               </a>
-              <a class="link-reset" href="/gumroad/user/${user.data.id}" id="post-${post.id}-username"></a>
+              <a class="link-reset" href="/gumroad/user/${post.user}" id="post-${post.id}-username"></a>
             </div>
           </div>
         </div>
@@ -141,7 +140,7 @@ async function main() {
               <a class="link-reset" href="/fanbox/user/${post.user}">
                 <p><b>${post.title}</b></p>
               </a>
-              <a class="link-reset" href="/fanbox/user/${user.data.id}" id="post-${post.id}-username"></a>
+              <a class="link-reset" href="/fanbox/user/${post.user}" id="post-${post.id}-username"></a>
             </div>
           </div>
         </div>
