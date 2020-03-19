@@ -46,7 +46,7 @@ express()
   })
   .get('/api/lookup', async(req, res) => {
     if (!req.query.q || req.query.q.length > 35) return res.sendStatus(400)
-    let index = await lookup.find({ service: 'patreon' }).toArray();
+    let index = await lookup.find({ service: 'patreon' }).limit(50).toArray();
     let results = query(`[*name~/${esc(req.query.q)}/i].id`, {
       data: index,
       allowRegexp: true
@@ -56,7 +56,7 @@ express()
   })
   .get('/api/fanbox/lookup', async(req, res) => {
     if (!req.query.q || req.query.q.length > 35) return res.sendStatus(400)
-    let index = await lookup.find({ service: 'fanbox' }).toArray();
+    let index = await lookup.find({ service: 'fanbox' }).limit(50).toArray();
     let results = query(`[*name~/${esc(req.query.q)}/i].id`, {
       data: index,
       allowRegexp: true
@@ -66,7 +66,7 @@ express()
   })
   .get('/api/gumroad/lookup', async(req, res) => {
     if (!req.query.q || req.query.q.length > 35) return res.sendStatus(400)
-    let index = await lookup.find({ service: 'gumroad' }).toArray();
+    let index = await lookup.find({ service: 'gumroad' }).limit(50).toArray();
     let results = query(`[*name~/${esc(req.query.q)}/i].id`, {
       data: index,
       allowRegexp: true
