@@ -34,6 +34,7 @@ async function scraper(key) {
   Promise.mapSeries(fanboxIndex.body, async(artist) => {
     processFanbox(`https://fanbox.pixiv.net/api/post.listCreator?userId=${artist.user.userId}&limit=100`, key)
   });
+  indexer();
 }
 
 async function processFanbox(url, key) {
@@ -110,8 +111,6 @@ async function processFanbox(url, key) {
 
   if (data.body.nextUrl && safeToLoop) {
     processFanbox(postData.nextUrl, key)
-  } else {
-    indexer();
   }
 }
 
