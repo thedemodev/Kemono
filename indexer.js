@@ -4,11 +4,12 @@ const { unraw } = require('unraw');
 const cloudscraper = require('cloudscraper').defaults({onCaptcha: require('./captcha')()})
 const { posts, lookup } = require('./db');
 async function indexer() {
+  console.log('hit!'); //debug
   posts
     .find({})
     .sort({ added_at: -1 })
     .forEach(async(post) => {
-      console.log('hit!'); //debug
+      console.log('post hit!'); //debug
       let indexExists = await lookup.findOne({id: post.user});
       if (indexExists) return;
 
