@@ -1,20 +1,16 @@
-const Promise = require('bluebird');
 const request = require('request-promise');
 const { unraw } = require('unraw');
 const cloudscraper = require('cloudscraper').defaults({onCaptcha: require('./captcha')()})
 const { posts, lookup } = require('./db');
 async function indexer() {
-  console.log('hit!'); //debug
   await posts
     .find({})
     .forEach(async(post) => {
-      console.log('post hit!'); //debug
       let indexExists = await lookup.findOne({id: post.user});
       if (indexExists) return;
 
       switch (post.service) {
         case 'patreon': {
-          console.log('new patreon!'); //debug
           let api = 'https://www.patreon.com/api/user';
           let user = await cloudscraper.get(`${api}/${post.user}`, { json: true });
           await lookup.insertOne({
