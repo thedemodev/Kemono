@@ -7,7 +7,7 @@ async function indexer() {
   console.log('hit!'); //debug
   await posts
     .find({})
-    .forEach(post => {
+    .forEach(async(post) => {
       console.log('post hit!'); //debug
       let indexExists = await lookup.findOne({id: post.user});
       if (indexExists) return;
