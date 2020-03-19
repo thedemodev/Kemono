@@ -64,7 +64,7 @@ async function indexer() {
           });
         }
       }
-    })
+    }, () => {})
 }
 
 module.exports = () => indexer()
