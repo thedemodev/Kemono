@@ -5,9 +5,9 @@ const cloudscraper = require('cloudscraper').defaults({onCaptcha: require('./cap
 const { posts, lookup } = require('./db');
 async function indexer() {
   console.log('hit!'); //debug
-  posts
+  await posts
     .find({})
-    .sort({ added_at: -1 })
+    //.sort({ added_at: -1 })
     .forEach(post => {
       console.log('post hit!'); //debug
       // let indexExists = await lookup.findOne({id: post.user});
