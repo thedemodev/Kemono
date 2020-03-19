@@ -86,6 +86,7 @@ async function main() {
   const recent = await recentData.json();
   recent.map(async(post) => {
     if (post.version == 1 || post.service == 'patreon') {
+      let marthaView = document.getElementById('recent-view');
       marthaView.innerHTML += `
         <div class="recent-row">
           <div class="recent-row-container">
@@ -108,6 +109,7 @@ async function main() {
           username += `<p>${user.data.attributes.vanity || user.data.attributes.full_name}</p>`
         })
     } else if (post.service == 'gumroad') {
+      let marthaView = document.getElementById('recent-view');
       marthaView.innerHTML += `
         <div class="recent-row">
           <div class="recent-row-container">
@@ -130,6 +132,7 @@ async function main() {
           username += `<p>${user.name}</p>`
         })
     } else if (post.service == 'fanbox') {
+      let marthaView = document.getElementById('recent-view');
       marthaView.innerHTML += `
         <div class="recent-row">
           <div class="recent-row-container">
@@ -158,4 +161,4 @@ async function main() {
   document.getElementById('search-input').addEventListener('keyup', _.debounce(searchUpdate, 350))
 }
 
-window.onload = main()
+main()
