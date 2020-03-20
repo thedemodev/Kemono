@@ -1159,11 +1159,6 @@ nl2br@^0.0.3:
   resolved "https://registry.yarnpkg.com/nl2br/-/nl2br-0.0.3.tgz#7778d6138979e051866ade0b3bf600f7c46324ee"
   integrity sha1-d3jWE4l54FGGat4LO/YA98RjJO4=
 
-node-sync@^0.5.6:
-  version "0.5.6"
-  resolved "https://registry.yarnpkg.com/node-sync/-/node-sync-0.5.6.tgz#d78bbd7af14af1c74ef5032240b58996cc30e2ca"
-  integrity sha1-14u9evFK8cdO9QMiQLWJlsww4so=
-
 noop6@^1.0.1, noop6@^1.0.7:
   version "1.0.8"
   resolved "https://registry.yarnpkg.com/noop6/-/noop6-1.0.8.tgz#eff06e2e5b3621e9e5618f389d6a2294f76e64ad"
