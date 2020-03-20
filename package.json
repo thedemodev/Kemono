@@ -2,7 +2,7 @@
   "private": true,
   "engines": {
     "node": "~13.7",
-    "yarn": "~1.21"
+    "yarn": "~1.22"
   },
   "scripts": {
     "dev": "supervisor -i node_modules,public -n error server.js",
@@ -24,6 +24,7 @@
     "mime": "^2.4.4",
     "mongo-lazy-connect": "^2.3.0",
     "nl2br": "^0.0.3",
+    "node-sync": "^0.5.6",
     "request": "^2.88.0",
     "request-promise": "^4.2.5",
     "retry": "^0.12.0",
