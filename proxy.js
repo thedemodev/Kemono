@@ -28,20 +28,25 @@ module.exports = (url, options = {}) => {
   return new Promise((resolve, reject) => {
     let proxies;
     retry(async(i) => {
-      let proxy;
-      if (i == 1) {
-        proxy = undefined; // try without proxy initially
-      } else {
-        proxies = proxies || await getProxies();
-        proxy = 'http://' + proxies[Math.floor(Math.random() * proxies.length)]
-      }
-      try {
+      return new Promise(async(success, fail) => {
+        let proxy;
+        if (i == 1) {
+          proxy = undefined; // try without proxy initially
+        } else {
+          proxies = proxies || await getProxies();
+          proxy = 'http://' + proxies[Math.floor(Math.random() * proxies.length)]
+        }
         cloudscraper.get(url, Object.assign(options, { proxy: proxy }))
-          .then(res => resolve(res))
-      } catch (err) {
-        if (err.errorType == 1) throw new Error(); // hit captcha; try again with a new proxy
-        reject(err)
-      }
+          .then(res => {
+            success()
+            resolve(res)
+          })
+          .catch(err => {
+            if (err.errorType == 1) return fail(); // hit captcha; try again with a new proxy
+            success()
+            reject(err)
+          })
+      })
     }, {retries: 300}).catch(() => reject())
   })
 }
