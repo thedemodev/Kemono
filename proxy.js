@@ -27,7 +27,7 @@ const getProxies = () => {
 module.exports = (url, options = {}) => {
   return new Promise((resolve, reject) => {
     let proxies;
-    retry(async(i) => {
+    retry(i => {
       return new Promise(async(success, fail) => {
         let proxy;
         if (i == 1) {
