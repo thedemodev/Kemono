@@ -35,12 +35,13 @@ module.exports = (url, options = {}) => {
         proxies = proxies || await getProxies();
         proxy = 'http://' + proxies[Math.floor(Math.random() * proxies.length)]
       }
-      cloudscraper.get(url, Object.assign(options, { proxy: proxy }))
-        .then(res => resolve(res))
-        .catch(err => {
-          if (err.errorType == 1) throw new Error(); // hit captcha; try again with a new proxy
-          reject(err)
-        })
+      try {
+        cloudscraper.get(url, Object.assign(options, { proxy: proxy }))
+          .then(res => resolve(res))
+      } catch (err) {
+        if (err.errorType == 1) throw new Error(); // hit captcha; try again with a new proxy
+        reject(err)
+      }
     }, {retries: 300}).catch(() => reject())
   })
 }
