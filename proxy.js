@@ -47,6 +47,6 @@ module.exports = (url, options = {}) => {
             reject(err)
           })
       })
-    }, {retries: 300}).catch(() => reject())
+    }, {retries: 300}).catch(err => reject(err))
   })
 }
