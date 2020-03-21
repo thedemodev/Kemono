@@ -1,5 +1,6 @@
 const Promise = require('bluebird');
 const request = require('request-promise');
+const cloudscraper = require('cloudscraper').defaults({onCaptcha: require('./captcha')()});
 const retry = require('retry');
 const getProxies = () => {
   // fork of proxy-list-random
@@ -39,7 +40,7 @@ module.exports = (url, options = {}) => {
         proxies = proxies || await getProxies();
         proxy = 'http://' + proxies[Math.floor(Math.random() * proxies.length)]
       }
-      request.get(url, Object.assign(options, { proxy: proxy }))
+      cloudscraper.get(url, Object.assign(options, { proxy: proxy }))
         .then(res => resolve(res))
         .catch(err => {
           console.log(err)
