@@ -44,8 +44,9 @@ module.exports = (url, options = {}) => {
       cloudscraper.get(url, Object.assign(options, { proxy: proxy }))
         .then(res => resolve(res))
         .catch(err => {
-          if (operation.retry(err.errorType) == 1) return; // hit captcha; try again with a new proxy
-          reject(err)
+          if (i == 300) return reject();
+          if (err.statusCode) return reject(err);
+          if (operation.retry(err)) return; // hit captcha; try again with a new proxy
         })
     })
   })
