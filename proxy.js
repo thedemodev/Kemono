@@ -40,6 +40,7 @@ module.exports = (url, options = {}) => {
         proxies = proxies || await getProxies();
         proxy = 'http://' + proxies[Math.floor(Math.random() * proxies.length)]
       }
+      console.log(proxy)
       cloudscraper.get(url, Object.assign(options, { proxy: proxy }))
         .then(res => resolve(res))
         .catch(err => {
