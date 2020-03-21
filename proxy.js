@@ -1,6 +1,5 @@
 const Promise = require('bluebird');
 const request = require('request-promise');
-const cloudscraper = require('cloudscraper');
 const retry = require('retry');
 const getProxies = () => {
   // fork of proxy-list-random
@@ -40,7 +39,7 @@ module.exports = (url, options = {}) => {
         proxies = proxies || await getProxies();
         proxy = 'http://' + proxies[Math.floor(Math.random() * proxies.length)]
       }
-      cloudscraper.get(url, Object.assign(options, { proxy: proxy }))
+      request.get(url, Object.assign(options, { proxy: proxy }))
         .then(res => resolve(res))
         .catch(err => {
           console.log(err)
