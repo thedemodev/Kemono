@@ -40,10 +40,10 @@ module.exports = (url, options = {}) => {
         proxies = proxies || await getProxies();
         proxy = 'http://' + proxies[Math.floor(Math.random() * proxies.length)]
       }
-      console.log(proxy)
       cloudscraper.get(url, Object.assign(options, { proxy: proxy }))
         .then(res => resolve(res))
         .catch(err => {
+          console.log(err)
           if (i == 300) return reject();
           if (err.statusCode) return reject(err);
           if (operation.retry(err)) return; // hit captcha; try again with a new proxy
