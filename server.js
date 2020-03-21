@@ -4,12 +4,11 @@ const scrapeIt = require('scrape-it');
 const getUrls = require('get-urls');
 const { posts, lookup } = require('./db');
 const { Worker } = require('worker_threads')
-const cloudscraper = require('cloudscraper');
+const cloudscraper = require('cloudscraper').defaults({onCaptcha: require('./captcha')()});
 const bodyParser = require('body-parser');
 const express = require('express');
 const esc = require('escape-string-regexp')
 const compression = require('compression');
-const proxy = require('./proxy');
 require('./indexer')()
 posts.createIndex({ user: 1 });
 express()
@@ -151,19 +150,15 @@ express()
     let api = 'https://www.patreon.com/api/user';
     let options = cloudscraper.defaultParams;
     options['json'] = true;
-    proxy(`${api}/${req.params.id}`, options)
+    cloudscraper.get(`${api}/${req.params.id}`, options)
       .then(user => {
         res.setHeader('Cache-Control', 'max-age=86400, public, stale-while-revalidate=2592000');
         res.json(user);
       })
-      .catch(err => {
-        if (err.statusCode) return res.sendStatus(err.statusCode)
-        res.sendStatus(503);
-      });
+      .catch(() => res.sendStatus(404));
   })
   .get('/proxy/fanbox/user/:id', async(req, res) => {
     let api = 'https://fanbox.pixiv.net/api/creator.get?userId';
-    // fanbox does not use cloudflare
     request
       .get(`${api}=${req.params.id}`, { 
         json: true, 
@@ -181,7 +176,7 @@ express()
   .get('/proxy/gumroad/user/:id', async(req, res) => {
     let api = 'https://gumroad.com';
     try {
-      let html = await proxy.get(`${api}/${req.params.id}`)
+      let html = await request.get(`${api}/${req.params.id}`)
       let user = scrapeIt.scrapeHTML(html, {
         background: {
           selector: '.profile-background-container.js-background-image-container img',
