@@ -1,7 +1,7 @@
 const Promise = require('bluebird');
 const request = require('request-promise');
 const cloudscraper = require('cloudscraper');
-const retry = require('p-retry');
+const retry = require('retry');
 const getProxies = () => {
   // fork of proxy-list-random
   return new Promise((resolve, reject) => {
@@ -27,26 +27,25 @@ const getProxies = () => {
 module.exports = (url, options = {}) => {
   return new Promise((resolve, reject) => {
     let proxies;
-    retry(i => {
-      return new Promise(async(success, fail) => {
-        let proxy;
-        if (i == 1) {
-          proxy = undefined; // try without proxy initially
-        } else {
-          proxies = proxies || await getProxies();
-          proxy = 'http://' + proxies[Math.floor(Math.random() * proxies.length)]
-        }
-        cloudscraper.get(url, Object.assign(options, { proxy: proxy }))
-          .then(res => {
-            success()
-            resolve(res)
-          })
-          .catch(err => {
-            if (err.errorType == 1) return fail(); // hit captcha; try again with a new proxy
-            success()
-            reject(err)
-          })
-      })
-    }, {retries: 300}).catch(err => reject(err))
+    let operation = retry.operation({
+      retries: 300,
+      factor: 1,
+      minTimeout: 0
+    });
+    operation.attempt(async(i) => {
+      let proxy;
+      if (i == 1) {
+        proxy = undefined; // try without proxy initially
+      } else {
+        proxies = proxies || await getProxies();
+        proxy = 'http://' + proxies[Math.floor(Math.random() * proxies.length)]
+      }
+      cloudscraper.get(url, Object.assign(options, { proxy: proxy }))
+        .then(res => resolve(res))
+        .catch(err => {
+          if (operation.retry(err.errorType) == 1) return; // hit captcha; try again with a new proxy
+          reject(err)
+        })
+    })
   })
 }
