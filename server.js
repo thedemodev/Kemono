@@ -152,7 +152,7 @@ express()
     options['json'] = true;
     cloudscraper.get(`${api}/${req.params.id}`, options)
       .then(user => {
-        res.setHeader('Cache-Control', 'max-age=86400, public, stale-while-revalidate=2592000');
+        res.setHeader('Cache-Control', 'max-age=2629800, public, stale-while-revalidate=2592000');
         res.json(user);
       })
       .catch(() => res.sendStatus(404));
@@ -168,7 +168,7 @@ express()
         }
       })
       .then(user => {
-        res.setHeader('Cache-Control', 'max-age=86400, public, stale-while-revalidate=2592000');
+        res.setHeader('Cache-Control', 'max-age=2629800, public, stale-while-revalidate=2592000');
         res.json(user);
       })
       .catch(() => res.sendStatus(404));
@@ -196,7 +196,7 @@ express()
         name: 'h2.creator-profile-card__name.js-creator-name'
       })
 
-      res.setHeader('Cache-Control', 'max-age=86400, public, stale-while-revalidate=2592000');
+      res.setHeader('Cache-Control', 'max-age=2629800, public, stale-while-revalidate=2592000');
       res.json(user);
     } catch {
       res.sendStatus(404)
