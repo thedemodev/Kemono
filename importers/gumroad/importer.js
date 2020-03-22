@@ -9,10 +9,7 @@ const request = require('request');
 const request2 = require('request').defaults({encoding: null});
 const { slugify } = require('transliteration');
 const indexer = require('../../indexer');
-const cloudscraper = require('cloudscraper')
-  .defaults({
-    onCaptcha: require('../../captcha')()
-  });
+const cloudscraper = require('cloudscraper');
 const apiOptions = key => {
   return {
     json: true,

@@ -7,10 +7,7 @@ const mime = require('mime');
 const crypto = require('crypto');
 const request = require('request');
 const request2 = require('request').defaults({encoding: null});
-const cloudscraper = require('cloudscraper')
-  .defaults({
-    onCaptcha: require('../../captcha')()
-  });
+const cloudscraper = require('cloudscraper');
 const apiOptions = key => {
   return {
     json: true,
