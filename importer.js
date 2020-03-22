@@ -150,7 +150,7 @@ async function scraper(key, uri = 'https://api.patreon.com/stream?json-api-versi
     })
 
     await Promise.map(postData.body.included, async(includedFile, i) => {
-      if (i === 0) return;
+      if (i === 0 && JSON.stringify(postDb.post_file) !== '{}') return;
       let fileBits = includedFile.attributes.file_name.split('.');
       let filename = slugify(fileBits[0], { lowercase: false });
       let ext = fileBits[fileBits.length-1];
