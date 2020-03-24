@@ -43,6 +43,10 @@ express()
     res.setHeader('Cache-Control', 's-maxage=1, stale-while-revalidate=2592000');
     res.sendFile(__dirname + '/www/gumroad/user.html');
   })
+  .get('/discord/server/:id', (req, res) => {
+    res.setHeader('Cache-Control', 's-maxage=1, stale-while-revalidate=2592000');
+    res.sendFile(__dirname + '/www/discord/server.html');
+  })
   .get('/api/lookup', async(req, res) => {
     if (!req.query.q || req.query.q.length > 35) return res.sendStatus(400)
     let index = await lookup
@@ -91,6 +95,22 @@ express()
     res.setHeader('Cache-Control', 's-maxage=10, stale-while-revalidate=2592000');
     res.json(index);
   })
+  .get('/api/discord/lookup', async(req, res) => {
+    if (!req.query.q || req.query.q.length > 35) return res.sendStatus(400);
+    let index = await lookup
+      .find({
+        service: 'discord',
+        name: {
+          $regex: esc(req.query.q),
+          $options: 'i'
+        }
+      })
+      .limit(50)
+      .map(user => user.id)
+      .toArray();
+    res.setHeader('Cache-Control', 's-maxage=10, stale-while-revalidate=2592000');
+    res.json(index);
+  })
   .get('/api/user/:id', async(req, res) => {
     let userPosts = await posts.find({ user: req.params.id })
       .sort({ published_at: -1 })
@@ -118,8 +138,17 @@ express()
     res.setHeader('Cache-Control', 's-maxage=1, stale-while-revalidate=2592000');
     res.json(userPosts);
   })
+  .get('/api/discord/server/:id', async(req, res) => {
+    let userPosts = await posts.find({ user: req.params.id, service: 'discord' })
+      .sort({ published_at: 1 })
+      .skip(Number(req.query.skip) || 0)
+      .limit(Number(req.query.limit) || 250)
+      .toArray();
+    res.setHeader('Cache-Control', 's-maxage=1, stale-while-revalidate=2592000');
+    res.json(userPosts);
+  })
   .get('/api/recent', async(req, res) => {
-    let recentPosts = await posts.find({})
+    let recentPosts = await posts.find({ service: { $ne: 'discord' } })
       .sort({ added_at: -1 })
       .skip(Number(req.query.skip) || 0)
       .limit(Number(req.query.limit) || 25)
@@ -144,6 +173,21 @@ express()
           .on('error', err => console.error(err))
         break;
     }
+    res.redirect('/importer/ok');
+  })
+  .post('/api/discord/import', async(req, res) => {
+    if (!req.body.session_key) return res.sendStatus(401);
+    if (!req.body.server_id) return res.sendStatus(400);
+    if (!req.body.channel_ids) return res.sendStatus(400);
+    new Worker('./importers/discord/importer.js', { 
+      workerData: {
+        key: req.body.session_key,
+        server: req.body.server_id,
+        channels: req.body.channel_ids
+      }
+    })
+      .on('error', err => console.error(err))
+      .on('message', msg => console.log(msg))
     res.redirect('/importer/ok');
   })
   .get('/proxy/user/:id', async(req, res) => {
@@ -202,4 +246,12 @@ express()
       res.sendStatus(404)
     }
   })
-  .listen(process.env.PORT || 8080)
+  .get('/proxy/discord/server/:id', async(req, res) => {
+    let index = await lookup
+      .find({ service: 'discord', id: req.params.id })
+      .project({ name: 1, icon: 1 })
+      .toArray();
+    res.setHeader('Cache-Control', 'max-age=2629800, public, stale-while-revalidate=2592000');
+    res.json(index);
+  })
+  .listen(process.env.PORT || 5000)

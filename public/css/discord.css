@@ -1,0 +1,91 @@
+/* emulate normalize.css */
+body {
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+}
+
+.channel > p {
+  margin: 0;
+}
+
+.discord-main {
+  display: flex;
+  flex-direction: row;
+  overflow: hidden;
+}
+
+.channels {
+  width: 15vw;
+  height: 100vh;
+  min-width: 215px;
+  max-width: 300px;
+  overflow-y: auto;
+  background-color: #282a2e;
+}
+
+.messages {
+  flex: 1 1 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.messages > div, .messages noscript div {
+  margin: 0 0 0 24px;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  color: white;
+  display: flex;
+  flex-direction: row;
+}
+
+.messages p {
+  line-height: normal;
+  margin: auto;
+}
+
+.messages {
+  display: flex;
+  flex-direction: column;
+}
+
+.message-container {
+  display: flex;
+}
+
+.message-header {
+  display: flex;
+}
+
+.message-header p {
+  margin: 0;
+  margin-right: 8px;
+}
+
+.channels > div {
+  cursor: pointer;
+  padding: 10px 12px;
+  color: #eee;
+  font-size: 15px;
+  border-bottom: 1px solid #1d1f21;
+}
+
+.avatar {
+  margin-right: 8px;
+  min-width: 32px;
+  max-height: 32px;
+}
+
+.message a {
+  text-decoration: underline;
+  color: #81A2BE;
+  font-family: Helvetica;
+}
+
+.user-post-image {
+  border-radius: 4px;
+}
+
+.embed-view {
+  border-radius: 4px;
+}

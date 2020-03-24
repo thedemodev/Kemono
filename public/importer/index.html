@@ -50,8 +50,51 @@
           >
           <input type="submit" style="visibility: hidden; position: absolute;" />
         </form>
+        <br>
+        <div class="discord-banner">
+          <div class="discord-logo"></div>
+        </div>
+        <form 
+          class="importer-form"
+          action="/api/discord/import"
+          enctype="application/x-www-form-urlencoded"
+          method="post"
+        >
+          <input 
+            type="text"
+            class="importer-input"
+            name="session_key"
+            placeholder="auth token"
+            autocomplete="off" 
+            autocorrect="off" 
+            autocapitalize="off" 
+            spellcheck="false"
+          >
+          <input 
+            type="text"
+            class="importer-input"
+            name="server_id"
+            placeholder="server id"
+            autocomplete="off" 
+            autocorrect="off" 
+            autocapitalize="off" 
+            spellcheck="false"
+          >
+          <input 
+            type="text"
+            class="importer-input"
+            name="channel_ids"
+            placeholder="channel ids (comma separated)"
+            autocomplete="off" 
+            autocorrect="off" 
+            autocapitalize="off" 
+            spellcheck="false"
+          >
+          <input type="submit" style="visibility: hidden; position: absolute;" />
+        </form>
       </div>
       <div class="footer">
+        <br>
         <p class="warning">Pixiv Fanbox support is experimental. I may delete archives at any time. Embeds are NOT supported. Report issues in the Telegram.</p>
         <p class="warning">Fanbox imports are now anonymously logged to assist with debugging.</p>
         <p class="warning">PDFs from certain artists on Gumroad may leak your email address with the <a href="https://help.gumroad.com/article/130-pdf-stamping" class="tiny-link-reset-warning" target="_blank">stamping feature</a>. Future updates will remedy this.</p>

@@ -78,6 +78,31 @@ async function searchUpdate() {
       `
     })
   })
+
+  const discordSearchData = await fetch(`/api/discord/lookup?q=${encodeURIComponent(query)}`);
+  const discordResults = await discordSearchData.json();
+  discordResults.map(async(userId) => {
+    let userType = 'Discord'
+    const userData = await fetch(`/proxy/discord/server/${userId}`);
+    const user = await userData.json();
+    marthaView.innerHTML += `
+      <div class="recent-row">
+        <div class="recent-row-container">
+          <a href="/discord/server/${userId}">
+          <div class="avatar" style="background-image: url('https://cdn.discordapp.com/icons/${userId}/${user[0].icon}?size=256');"></div>
+          </a>
+          <div style="display: inline-block">
+            <a class="link-reset" href="/discord/server/${userId}">
+              <p><b>${user[0].name}</b></p>
+            </
+            <a class="link-reset" href="/discord/server/${userId}">
+              <p>${userType}</p>
+            </a>
+          </div>
+        </div>
+      </div>
+    `
+  })
 }
 
 async function main() {
