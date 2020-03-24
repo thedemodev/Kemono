@@ -6,7 +6,6 @@ const { posts, lookup } = require('./db');
 async function indexer() {
   let postsData = await posts
     .find({})
-    .sort({ added_at: -1 })
     .project({ version: 1, user: 1 })
     .toArray();
   Promise.mapSeries(postsData, async(post) => {
