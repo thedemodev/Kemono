@@ -1,6 +1,6 @@
 const { posts } = require('./db');
 const request = require('request');
-const cloudscraper = require('cloudscraper').defaults({onCaptcha: require('./captcha')()});
+const cloudscraper = require('cloudscraper');
 const { workerData } = require('worker_threads');
 const { slugify } = require('transliteration');
 const cd = require('content-disposition');
