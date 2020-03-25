@@ -1,7 +1,7 @@
 const { workerData, parentPort } = require('worker_threads');
 const { posts, lookup } = require('../../db');
 const Promise = require('bluebird');
-const cloudscraper = require('cloudscraper');
+const cloudscraper = require('cloudscraper').defaults({onCaptcha: require('./captcha')()});
 const request = require('request').defaults({ encoding: null })
 const fs = require('fs-extra');
 const range = require('node-num-range');
