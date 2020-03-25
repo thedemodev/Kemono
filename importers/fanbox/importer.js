@@ -173,8 +173,6 @@ async function processFanbox(url, key) {
 
   if (data.body.nextUrl && safeToLoop) {
     processFanbox(postData.nextUrl, key)
-  } else {
-    indexer();
   }
 }
 
