@@ -105,6 +105,7 @@ async function scraper(key) {
           .get(file.link, scrapeOptions(key))
           .on('complete', async(res) => {
             let ext = mime.getExtension(res.headers['content-type']);
+            if (res.headers['content-type'] === 'attachment') ext = 'pdf';
             let filename = slugify(file.filename, { lowercase: false });
             model.attachments.push({
               name: `${filename}.${ext}`,
