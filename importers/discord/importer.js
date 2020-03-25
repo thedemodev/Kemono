@@ -69,6 +69,15 @@ async function scraper(key, server, channels) {
       }
     })
     if (channelnfo.statusCode != 200) return;
+    let channelExists = await lookup.findOne({id: channelnfo.body.id, service: 'discord-channel'});
+    if (!channelExists) {
+      await lookup.insertOne({
+        version: 3,
+        service: 'discord-channel',
+        id: channelnfo.body.id,
+        server: server
+      });
+    }
     await Promise.mapSeries(range(date.getFullYear(), 2015), async(year) => {
       await Promise.mapSeries(range(12, 1), async(month) => {
         await Promise.mapSeries(range(31, 1), async(day) => {
