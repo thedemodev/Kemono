@@ -21,18 +21,7 @@ const getDay = (month, day, year) => {
     '23:59': SnowflakeUtil.generate(maxTime)
   }
 }
-const sanitizeContent = async(content) => {
-  if (!content) return '';
-  let urls = getUrls(content, {
-    sortQueryParameters: false,
-    stripWWW: false
-  });
-  await Promise.mapSeries(urls, async(val) => {
-    let url = new URL(val);
-    content = content.replace(url, `<a href="${url}">${url}</a>`)
-  })
-  return content;
-}
+
 async function scraper(key, server, channels) {
   let date = new Date();
   let channelArray = channels.split(',');
