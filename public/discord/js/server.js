@@ -14,7 +14,6 @@ const loadMessages = async(channelId, skip = 0) => {
     let avatarurl = '';
     let embeds = ''
     msg.attachments.map(dl => {
-      let path = dl.path.replace('https://kemono.party', 'http://localhost:5000') // debug
       if (dl.isImage) {
         dls += `<a href="${path}" target="_blank"><img class="user-post-image" style="max-width:300px"src="${path}"></a><br>`
       } else {

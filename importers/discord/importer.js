@@ -1,4 +1,4 @@
-const { workerData, parentPort } = require('worker_threads');
+const { workerData } = require('worker_threads');
 const { posts, lookup } = require('../../db');
 const Promise = require('bluebird');
 const cloudscraper = require('cloudscraper').defaults({onCaptcha: require('../../captcha')()});
@@ -34,7 +34,6 @@ const sanitizeContent = async(content) => {
   return content;
 }
 async function scraper(key, server, channels) {
-  parentPort.postMessage('starting');
   let date = new Date();
   let channelArray = channels.split(',');
   // validate server and create lookup indexes
@@ -46,8 +45,8 @@ async function scraper(key, server, channels) {
       'authorization': key,
       'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36'
     }
-  }).catch(err => parentPort.postMessage(err))
-  if (nfo.statusCode != 200) return parentPort.postMessage(nfo.statusCode);
+  })
+  if (nfo.statusCode != 200) return;
   let indexExists = await lookup.findOne({id: nfo.body.id, service: 'discord'});
   if (!indexExists) {
     await lookup.insertOne({
@@ -84,7 +83,6 @@ async function scraper(key, server, channels) {
       await Promise.mapSeries(range(12, 1), async(month) => {
         await Promise.mapSeries(range(31, 1), async(day) => {
           // skip date if future
-          parentPort.postMessage(`${month} ${day} ${year}`)
           if (month > date.getMonth() && year == date.getFullYear()) return;
           if (month == date.getMonth() && day > date.getDate()) return;
           let snowflakes = getDay(month, day, year)
@@ -105,10 +103,8 @@ async function scraper(key, server, channels) {
               }
             }
           ), { retries: 5 })
-          parentPort.postMessage(discord)
           await Promise.mapSeries(discord.messages, async(block) => {
             await Promise.mapSeries(block, async(msg) => {
-              parentPort.postMessage(msg.content);
               let attachmentsKey = `attachments/discord/${server}/${msg.channel_id}/${msg.id}`
               let existing = await posts.findOne({id: msg.id, service: 'discord'});
               if (existing) return;
