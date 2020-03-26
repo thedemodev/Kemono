@@ -111,6 +111,20 @@ h1, h2, h3, p {
   margin: 0;
 }
 
+.discord-banner {
+  border-radius: 5px;
+  min-height: 32px;
+  background-color: #7289DA;
+}
+
+.discord-logo {
+  min-height: 32px;
+  background-size: contain;
+  background-position: center;
+  background-image: url('https://discordapp.com/assets/e7a3b51fdac2aa5ec71975d257d5c405.png');
+  background-repeat: no-repeat;
+}
+
 .embed-view {
   border-radius: 10px;
   border: 1px solid #111;
