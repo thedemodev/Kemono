@@ -43,7 +43,6 @@ const sanitizePostContent = async(content) => {
   return content;
 }
 async function scraper(key, uri = 'https://api.patreon.com/stream?json-api-version=1.0') {
-  let safeToLoop = true;
   let patreon = await cloudscraper.get(uri, {
     resolveWithFullResponse: true,
     json: true,
@@ -51,7 +50,6 @@ async function scraper(key, uri = 'https://api.patreon.com/stream?json-api-versi
       'cookie': `session_id=${key}`
     }
   })
-  if (patreon.body.data.length == 0) safeToLoop = false;
   await Promise.map(patreon.body.data, async(post) => {
     let attr = post.attributes;
     let rel = post.relationships;
@@ -163,7 +161,7 @@ async function scraper(key, uri = 'https://api.patreon.com/stream?json-api-versi
     await posts.insertOne(postDb)
   })
   
-  if (patreon.body.links.next && safeToLoop) {
+  if (patreon.body.links.next) {
     scraper(key, 'https://' + patreon.body.links.next)
   } else {
     indexer();
