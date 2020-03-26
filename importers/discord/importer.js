@@ -116,8 +116,11 @@ async function scraper(key, server, channels) {
               await Promise.map(msg.embeds, async(embed) => model.embeds.push(embed))
               await Promise.map(msg.attachments, async(attachment) => {
                 await fs.ensureFile(`${process.env.DB_ROOT}/${attachmentsKey}/${attachment.filename}`);
-                request.get({url: attachment.proxy_url, encoding: null})
-                  .pipe(fs.createWriteStream(`${process.env.DB_ROOT}/${attachmentsKey}/${attachment.filename}`));
+                await new Promise(resolve => {
+                  request.get({url: attachment.proxy_url, encoding: null})
+                    .on('complete', () => resolve())
+                    .pipe(fs.createWriteStream(`${process.env.DB_ROOT}/${attachmentsKey}/${attachment.filename}`));
+                })
                 model.attachments.push({
                   isImage: isImage(attachment.filename),
                   name: attachment.filename,
