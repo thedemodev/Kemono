@@ -8,7 +8,6 @@ const nl2br = require('nl2br');
 const range = require('node-num-range');
 const retry = require('p-retry');
 const isImage = require('is-image');
-const getUrls = require('get-urls');
 const { SnowflakeUtil } = require('discord.js');
 // port of https://github.com/Dracovian/Discord-Scraper
 const random = (min, max) => Math.floor(Math.random() * (max - min) + min)
