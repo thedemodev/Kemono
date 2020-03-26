@@ -15,9 +15,9 @@ const loadMessages = async(channelId, skip = 0) => {
     let embeds = ''
     msg.attachments.map(dl => {
       if (dl.isImage) {
-        dls += `<a href="${path}" target="_blank"><img class="user-post-image" style="max-width:300px"src="${path}"></a><br>`
+        dls += `<a href="${dl.path}" target="_blank"><img class="user-post-image" style="max-width:300px"src="${dl.path}"></a><br>`
       } else {
-        dls += `<a href="${path}">Download ${dl.name}</a><br>`
+        dls += `<a href="${dl.path}">Download ${dl.name}</a><br>`
       }
     })
     msg.embeds.map(embed => {
