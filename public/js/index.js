@@ -182,6 +182,11 @@ async function main() {
     }
   });
   document.getElementById('search-input').addEventListener('keyup', _.debounce(searchUpdate, 350))
+  document.getElementById('search-input').addEventListener('keyup', e => {
+    if (e.key === "Enter") {
+      searchUpdate()
+    }
+  })
 }
 
 main()
