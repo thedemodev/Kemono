@@ -4,6 +4,7 @@ const Promise = require('bluebird');
 const cloudscraper = require('cloudscraper').defaults({onCaptcha: require('../../captcha')()});
 const request = require('request').defaults({ encoding: null })
 const fs = require('fs-extra');
+const nl2br = require('nl2br');
 const range = require('node-num-range');
 const retry = require('p-retry');
 const isImage = require('is-image');
@@ -100,7 +101,7 @@ async function scraper(key, server, channels) {
               let model = {
                 version: 3,
                 service: 'discord',
-                content: await sanitizeContent(msg.content),
+                content: nl2br(msg.content),
                 id: msg.id,
                 author: msg.author,
                 user: server,
