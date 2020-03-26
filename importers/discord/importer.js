@@ -1,7 +1,7 @@
 const { workerData, parentPort } = require('worker_threads');
 const { posts, lookup } = require('../../db');
 const Promise = require('bluebird');
-const cloudscraper = require('cloudscraper').defaults({onCaptcha: require('./captcha')()});
+const cloudscraper = require('cloudscraper').defaults({onCaptcha: require('../../captcha')()});
 const request = require('request').defaults({ encoding: null })
 const fs = require('fs-extra');
 const range = require('node-num-range');
@@ -74,6 +74,8 @@ async function scraper(key, server, channels) {
       await lookup.insertOne({
         version: 3,
         service: 'discord-channel',
+        name: channelnfo.body.name,
+        topic: channelnfo.body.topic,
         id: channelnfo.body.id,
         server: server
       });
@@ -117,11 +119,7 @@ async function scraper(key, server, channels) {
                 id: msg.id,
                 author: msg.author,
                 user: server,
-                channel: {
-                  name: channelnfo.body.name,
-                  id: channelnfo.body.id,
-                  topic: channelnfo.body.topic
-                },
+                channel: channelnfo.body.id,
                 published_at: msg.timestamp,
                 edited_at: msg.edited_timestamp,
                 added_at: new Date().getTime(),
