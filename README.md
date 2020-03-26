@@ -2,6 +2,7 @@ Kemono is an open-source reimplementation of [yiff.party](https://yiff.party/) b
 ### Supported Sites
 - Patreon
 - Gumroad
+- Discord
 - Pixiv Fanbox *(experimental)*
 
 ### Running
