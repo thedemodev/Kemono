@@ -17,4 +17,4 @@ function lazyload() {
     image.style.width = "auto"*/
     imageObserver.observe(image);
   });
-})
+}
