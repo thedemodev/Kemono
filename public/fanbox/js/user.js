@@ -89,5 +89,6 @@ async function main() {
     `
     loadMorePosts(0)
   });
+  lazyload();
 }
 main()
