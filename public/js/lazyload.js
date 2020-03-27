@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", function() {
+function lazyload() {
   var lazyloadImages;    
 
   lazyloadImages = document.querySelectorAll(".user-post-image");
