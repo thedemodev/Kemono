@@ -75,23 +75,34 @@ async function scraper(key, server, channels) {
           if (month > date.getMonth() && year == date.getFullYear()) return;
           if (month == date.getMonth() && day > date.getDate()) return;
           let snowflakes = getDay(month, day, year)
-          let discord = await retry(() => cloudscraper.get(
-            `https://discordapp.com/api/v6/guilds/${server}/messages/search?channel_id=${channel}` +
-            `&min_id=${snowflakes['00:00']}&max_id=${snowflakes['23:59']}` +
-            `&has=image` +
-            `&has=file` +
-            `&has=embed` +
-            `&has=link` +
-            `&has=video` +
-            `&include_nsfw=true`, {
-              json: true,
-              headers: {
-                'authorization': key,
-                'referer': `https://discordapp.com/channels/${server}/${channel}`,
-                'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36'
-              }
-            }
-          ), { retries: 5 })
+          let discord = await retry(() => {
+            return new Promise((resolve, reject) => {
+              cloudscraper
+                .get(
+                  `https://discordapp.com/api/v6/guilds/${server}/messages/search?channel_id=${channel}` +
+                  `&min_id=${snowflakes['00:00']}&max_id=${snowflakes['23:59']}` +
+                  `&has=image` +
+                  `&has=file` +
+                  `&has=embed` +
+                  `&has=link` +
+                  `&has=video` +
+                  `&include_nsfw=true`, 
+                  {
+                    json: true,
+                    headers: {
+                      'authorization': key,
+                      'referer': `https://discordapp.com/channels/${server}/${channel}`,
+                      'user-agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) discord/0.0.305 Chrome/69.0.3497.128 Electron/4.0.8 Safari/537.36'
+                    }
+                  }
+                )
+                .then(res => resolve(res))
+                .catch(async(err) => {
+                  if (err.statusCode == 429) await sleep(err.error.retry_after);
+                  return reject(err);
+                })
+            }) 
+          })
           await Promise.mapSeries(discord.messages, async(block) => {
             await Promise.mapSeries(block, async(msg) => {
               let attachmentsKey = `attachments/discord/${server}/${msg.channel_id}/${msg.id}`
@@ -131,7 +142,7 @@ async function scraper(key, server, channels) {
               await posts.insertOne(model);
             })
           })
-          await sleep(random(1000, 1250))
+          await sleep(random(500, 1250))
         })
       })
     })
