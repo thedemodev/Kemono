@@ -22,7 +22,7 @@ async function loadMorePosts(skip) {
     })
 
     if (post.post_type == 'image') {
-      image = `<a class="fileThumb" href="${post.post_file.path}"><img class="user-post-image" data-src="${post.post_file.path}"></a>
+      image = `<a class="fileThumb" href="${post.post_file.path}"><img class="user-post-image" data-src="${post.post_file.path}"></a>`
       imageDl = `
         <a 
           class="user-post-attachment-link" 
