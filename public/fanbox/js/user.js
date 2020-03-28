@@ -59,6 +59,7 @@ async function loadMorePosts(skip) {
   marthaView.innerHTML += `
     <button onClick="loadMorePosts(${skip + 26})" id="load-more-button" class="load-more-button">Load More</a>
   `
+  lazyload();
 }
 
 async function main() {
@@ -89,6 +90,5 @@ async function main() {
     `
     loadMorePosts(0)
   });
-  lazyload();
 }
 main()
