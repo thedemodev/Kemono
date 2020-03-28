@@ -22,7 +22,14 @@ async function loadMorePosts(skip) {
     })
 
     if (post.post_type == 'image') {
-      image = `<img class="user-post-image" src="${post.post_file.path}">`
+      image = `
+        <a class="fileThumb" href="${post.post_file.path}">
+          <img 
+            class="user-post-image" 
+            data-src="/thumbnail/${post.post_file.path.replace('https://kemono.party/', '')}"
+          >
+        </a>
+      `
       imageDl = `
         <a 
           class="user-post-attachment-link" 
@@ -59,6 +66,7 @@ async function loadMorePosts(skip) {
   marthaView.innerHTML += `
     <button onClick="loadMorePosts(${skip + 26})" id="load-more-button" class="load-more-button">Load More</a>
   `
+  lazyload();
 }
 
 async function main() {

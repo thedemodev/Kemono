@@ -1,4 +1,7 @@
 require('dotenv').config()
+const sharp = require('sharp');
+const fs = require('fs-extra');
+const isImage = require('is-image');
 const request = require('request-promise');
 const scrapeIt = require('scrape-it');
 const getUrls = require('get-urls');
@@ -21,16 +24,25 @@ express()
   }))
   .use('/files', express.static(`${process.env.DB_ROOT}/files`, {
     dotfiles: 'allow',
-    setHeaders: (res) => res.setHeader('Cache-Control', 's-maxage=2592000')
+    setHeaders: (res) => res.setHeader('Cache-Control', 's-maxage=31557600')
   }))
   .use('/attachments', express.static(`${process.env.DB_ROOT}/attachments`, {
     dotfiles: 'allow',
-    setHeaders: (res) => res.setHeader('Cache-Control', 's-maxage=2592000')
+    setHeaders: (res) => res.setHeader('Cache-Control', 's-maxage=31557600')
   }))
   .use('/inline', express.static(`${process.env.DB_ROOT}/inline`, {
     dotfiles: 'allow',
-    setHeaders: (res) => res.setHeader('Cache-Control', 's-maxage=2592000')
+    setHeaders: (res) => res.setHeader('Cache-Control', 's-maxage=31557600')
   }))
+  .get('/thumbnail/*', async(req, res) => {
+    let fileExists = await fs.pathExists(`${process.env.DB_ROOT}/${req.params[0]}`);
+    let image = isImage(`${process.env.DB_ROOT}/${req.params[0]}`);
+    if (!fileExists || !image) return res.sendStatus(404);
+    res.setHeader('Cache-Control', 'max-age=31557600, public');
+    fs.createReadStream(`${process.env.DB_ROOT}/${req.params[0]}`)
+      .pipe(sharp().resize({ width: 800, withoutEnlargement: true }).jpeg())
+      .pipe(res)
+  })
   .get('/user/:id', (req, res) => {
     res.setHeader('Cache-Control', 's-maxage=1, stale-while-revalidate=2592000');
     res.sendFile(__dirname + '/www/user.html');
