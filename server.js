@@ -40,8 +40,6 @@ express()
     let file = `${process.env.DB_ROOT}/${req.params[0]}`
     let fileExists = await fs.pathExists(file);
     if (!fileExists || !isImage(file)) return res.sendStatus(404);
-    if (isGif(file)) return fs.sendFile(file);
-
     res.setHeader('Cache-Control', 'max-age=31557600, public');
     fs.createReadStream(file)
       .pipe(
