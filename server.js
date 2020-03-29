@@ -12,6 +12,7 @@ const bodyParser = require('body-parser');
 const express = require('express');
 const esc = require('escape-string-regexp')
 const compression = require('compression');
+const isGif = path => /^(.*\.(gif)$)?[^.]*$/i.test(path);
 require('./indexer')()
 posts.createIndex({ user: 1 });
 sharp.cache(false);
@@ -36,11 +37,13 @@ express()
     setHeaders: (res) => res.setHeader('Cache-Control', 's-maxage=31557600')
   }))
   .get('/thumbnail/*', async(req, res) => {
-    let fileExists = await fs.pathExists(`${process.env.DB_ROOT}/${req.params[0]}`);
-    let image = isImage(`${process.env.DB_ROOT}/${req.params[0]}`);
-    if (!fileExists || !image) return res.sendStatus(404);
+    let file = `${process.env.DB_ROOT}/${req.params[0]}`
+    let fileExists = await fs.pathExists(file);
+    if (!fileExists || !isImage(file)) return res.sendStatus(404);
+    if (isGif(file)) return fs.sendFile(file);
+
     res.setHeader('Cache-Control', 'max-age=31557600, public');
-    fs.createReadStream(`${process.env.DB_ROOT}/${req.params[0]}`)
+    fs.createReadStream(file)
       .pipe(
         sharp({
           failOnError: false,
