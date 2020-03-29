@@ -14,6 +14,7 @@ const esc = require('escape-string-regexp')
 const compression = require('compression');
 require('./indexer')()
 posts.createIndex({ user: 1 });
+sharp.cache(false);
 express()
   .use(compression())
   .use(bodyParser.urlencoded({ extended: false }))
@@ -40,7 +41,11 @@ express()
     if (!fileExists || !image) return res.sendStatus(404);
     res.setHeader('Cache-Control', 'max-age=31557600, public');
     fs.createReadStream(`${process.env.DB_ROOT}/${req.params[0]}`)
-      .pipe(sharp().resize({ width: 800, withoutEnlargement: true }).jpeg())
+      .pipe(
+        sharp({ failOnError: false })
+          .resize({ width: 800, withoutEnlargement: true })
+          .jpeg()
+      )
       .pipe(res)
   })
   .get('/user/:id', (req, res) => {
