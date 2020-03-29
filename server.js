@@ -42,7 +42,10 @@ express()
     res.setHeader('Cache-Control', 'max-age=31557600, public');
     fs.createReadStream(`${process.env.DB_ROOT}/${req.params[0]}`)
       .pipe(
-        sharp({ failOnError: false })
+        sharp({
+          failOnError: false,
+          sequentialRead: true
+        })
           .resize({ width: 800, withoutEnlargement: true })
           .jpeg()
       )
