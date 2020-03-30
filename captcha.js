@@ -26,6 +26,7 @@ module.exports = () => {
           );
           if (token == 'CAPTCHA_NOT_READY') return;
           captcha.form['g-recaptcha-response'] = token;
+          captcha.form['h-recaptcha-response'] = token;
           captcha.submit();
         })
       })
