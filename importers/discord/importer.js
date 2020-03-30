@@ -81,11 +81,6 @@ async function scraper(key, server, channels) {
                 .get(
                   `https://discordapp.com/api/v6/guilds/${server}/messages/search?channel_id=${channel}` +
                   `&min_id=${snowflakes['00:00']}&max_id=${snowflakes['23:59']}` +
-                  `&has=image` +
-                  `&has=file` +
-                  `&has=embed` +
-                  `&has=link` +
-                  `&has=video` +
                   `&include_nsfw=true`, 
                   {
                     json: true,
