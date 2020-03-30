@@ -26,17 +26,13 @@ const sanitizePostContent = async(content) => {
       let filename = new Date().getTime() + '.' + mime.getExtension(imageMime);
       await fs.ensureFile(`${process.env.DB_ROOT}/inline/${filename}`);
       await new Promise(resolve => {
-        try {
-          request.get({url: val, encoding: null})
-            .on('complete', () => {
-              content = content.replace(val, `https://kemono.party/inline/${filename}`);
-              resolve();
-            })
-            .pipe(fs.createWriteStream(`${process.env.DB_ROOT}/inline/${filename}`))
-        } catch (error) {
-          // ignore for now
-          resolve();
-        }
+        request.get({url: val, encoding: null})
+          .on('complete', () => {
+            content = content.replace(val, `https://kemono.party/inline/${filename}`);
+            resolve();
+          })
+          .on('error', () => resolve())
+          .pipe(fs.createWriteStream(`${process.env.DB_ROOT}/inline/${filename}`))
       })
     }
   })
