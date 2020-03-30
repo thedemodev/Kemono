@@ -1,7 +1,7 @@
 const { posts } = require('./db');
 const request = require('request');
 const cloudscraper = require('cloudscraper').defaults({onCaptcha: require('./captcha')()});
-const { workerData } = require('worker_threads');
+const { workerData, parentPort } = require('worker_threads');
 const { slugify } = require('transliteration');
 const cd = require('content-disposition');
 const Promise = require('bluebird');
@@ -79,12 +79,15 @@ async function scraper(key, uri = 'https://api.patreon.com/stream?json-api-versi
       attachments: []
     };
 
+    parentPort.postMessage('finished: inline')
+
     if (attr.post_file) {
       let fileBits = attr.post_file.name.split('.');
       let filename = slugify(fileBits[0], { lowercase: false });
       let ext = fileBits[fileBits.length-1];
       await fs.ensureFile(`${process.env.DB_ROOT}/${fileKey}/${filename}.${ext}`);
       await request.get({url: attr.post_file.url, encoding: null})
+        .on('complete', () => parentPort.postMessage('finished: ' + attr.post_file.url))
         .pipe(fs.createWriteStream(`${process.env.DB_ROOT}/${fileKey}/${filename}.${ext}`))
       postDb.post_file['name'] = attr.post_file.name
       postDb.post_file['path'] = `${cdn}/${fileKey}/${filename}.${ext}`
@@ -113,6 +116,7 @@ async function scraper(key, uri = 'https://api.patreon.com/stream?json-api-versi
         })
         request.get({url: res.headers['location'], encoding: null})
           .on('complete', async(attachmentData) => {
+            parentPort.postMessage('finished: ' + res.headers['location'])
             let info = cd.parse(attachmentData.headers['content-disposition']);
             let fileBits = info.parameters.filename.split('.');
             let filename = slugify(fileBits[0], { lowercase: false });
@@ -147,6 +151,7 @@ async function scraper(key, uri = 'https://api.patreon.com/stream?json-api-versi
       let ext = fileBits[fileBits.length-1];
       await fs.ensureFile(`${process.env.DB_ROOT}/${attachmentsKey}/${filename}.${ext}`);
       request.get({url: includedFile.attributes.download_url, encoding: null})
+        .on('complete', () => parentPort.postMessage('finished: ' + includedFile.attributes.download_url))
         .pipe(fs.createWriteStream(`${process.env.DB_ROOT}/${attachmentsKey}/${filename}.${ext}`))
       postDb.attachments.push({
         name: includedFile.attributes.file_name,
