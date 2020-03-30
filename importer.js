@@ -88,8 +88,12 @@ async function scraper(key, uri = 'https://api.patreon.com/stream?json-api-versi
       let filename = slugify(fileBits[0], { lowercase: false });
       let ext = fileBits[fileBits.length-1];
       await fs.ensureFile(`${process.env.DB_ROOT}/${fileKey}/${filename}.${ext}`);
-      await request.get({url: attr.post_file.url, encoding: null})
-        .pipe(fs.createWriteStream(`${process.env.DB_ROOT}/${fileKey}/${filename}.${ext}`))
+      await new Promise((resolve, reject) => {
+        request.get({url: attr.post_file.url, encoding: null})
+          .on('complete', () => resolve())
+          .on('error', err => reject(err))
+          .pipe(fs.createWriteStream(`${process.env.DB_ROOT}/${fileKey}/${filename}.${ext}`))
+      })
       postDb.post_file['name'] = attr.post_file.name
       postDb.post_file['path'] = `${cdn}/${fileKey}/${filename}.${ext}`
     }
@@ -150,8 +154,12 @@ async function scraper(key, uri = 'https://api.patreon.com/stream?json-api-versi
       let filename = slugify(fileBits[0], { lowercase: false });
       let ext = fileBits[fileBits.length-1];
       await fs.ensureFile(`${process.env.DB_ROOT}/${attachmentsKey}/${filename}.${ext}`);
-      request.get({url: includedFile.attributes.download_url, encoding: null})
-        .pipe(fs.createWriteStream(`${process.env.DB_ROOT}/${attachmentsKey}/${filename}.${ext}`))
+      await new Promise((resolve, reject) => {
+        request.get({url: includedFile.attributes.download_url, encoding: null})
+          .on('complete', () => resolve())
+          .on('error', err => reject(err))
+          .pipe(fs.createWriteStream(`${process.env.DB_ROOT}/${attachmentsKey}/${filename}.${ext}`))
+      })
       postDb.attachments.push({
         name: includedFile.attributes.file_name,
         path: `${cdn}/${attachmentsKey}/${filename}.${ext}`
