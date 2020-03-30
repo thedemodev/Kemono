@@ -14,7 +14,7 @@ const esc = require('escape-string-regexp')
 const compression = require('compression');
 require('./indexer')()
 posts.createIndex({ user: 1 });
-sharp.cache(false);
+// sharp.cache(false);
 express()
   .use(compression())
   .use(bodyParser.urlencoded({ extended: false }))
@@ -35,22 +35,23 @@ express()
     dotfiles: 'allow',
     setHeaders: (res) => res.setHeader('Cache-Control', 's-maxage=31557600')
   }))
-  .get('/thumbnail/*', async(req, res) => {
-    let file = `${process.env.DB_ROOT}/${req.params[0]}`
-    let fileExists = await fs.pathExists(file);
-    if (!fileExists || !isImage(file)) return res.sendStatus(404);
-    res.setHeader('Cache-Control', 'max-age=31557600, public');
-    fs.createReadStream(file)
-      .pipe(
-        sharp({
-          failOnError: false,
-          sequentialRead: true
-        })
-          .resize({ width: 800, withoutEnlargement: true })
-          .jpeg()
-      )
-      .pipe(res)
-  })
+  // temporarily disabled.
+  // .get('/thumbnail/*', async(req, res) => {
+  //   let file = `${process.env.DB_ROOT}/${req.params[0]}`
+  //   let fileExists = await fs.pathExists(file);
+  //   if (!fileExists || !isImage(file)) return res.sendStatus(404);
+  //   res.setHeader('Cache-Control', 'max-age=31557600, public');
+  //   fs.createReadStream(file)
+  //     .pipe(
+  //       sharp({
+  //         failOnError: false,
+  //         sequentialRead: true
+  //       })
+  //         .resize({ width: 800, withoutEnlargement: true })
+  //         .jpeg()
+  //     )
+  //     .pipe(res)
+  // })
   .get('/user/:id', (req, res) => {
     res.setHeader('Cache-Control', 's-maxage=1, stale-while-revalidate=2592000');
     res.sendFile(__dirname + '/www/user.html');

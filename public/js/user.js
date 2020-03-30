@@ -26,7 +26,7 @@ async function loadMorePosts(skip) {
         <a class="fileThumb" href="${post.post_file.path}">
           <img 
             class="user-post-image" 
-            data-src="/thumbnail/${post.post_file.path.replace('https://kemono.party/', '')}"
+            data-src="/thumbnail/${post.post_file.path}"
           >
         </a>
       `
