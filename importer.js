@@ -47,6 +47,7 @@ async function scraper(key, uri = 'https://api.patreon.com/stream?json-api-versi
     }
   })
   await Promise.map(patreon.body.data, async(post) => {
+    parentPort.postMessage('post ' + post.id)
     let attr = post.attributes;
     let rel = post.relationships;
     let cdn = 'https://kemono.party'
