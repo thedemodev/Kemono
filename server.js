@@ -194,15 +194,17 @@ express()
       case 'patreon':
         new Worker('./importer.js', { workerData: req.body.session_key })
           .on('error', err => console.error(err))
+          .on('message', msg => console.log(msg))
         break;
       case 'fanbox':
         new Worker('./importers/fanbox/importer.js', { workerData: req.body.session_key })
           .on('error', err => console.error(err))
-          .on('message', msg => console.log(msg)) // logging
+          .on('message', msg => console.log(msg))
         break;
       case 'gumroad':
         new Worker('./importers/gumroad/importer.js', { workerData: req.body.session_key })
           .on('error', err => console.error(err))
+          .on('message', msg => console.log(msg))
         break;
     }
     res.redirect('/importer/ok');
