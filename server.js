@@ -12,7 +12,6 @@ const bodyParser = require('body-parser');
 const express = require('express');
 const esc = require('escape-string-regexp')
 const compression = require('compression');
-const isGif = path => /^(.*\.(gif)$)?[^.]*$/i.test(path);
 require('./indexer')()
 posts.createIndex({ user: 1 });
 sharp.cache(false);
