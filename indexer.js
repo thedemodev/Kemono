@@ -62,13 +62,16 @@ async function indexer() {
       }
       default: {
         let api = 'https://www.patreon.com/api/user';
-        let user = await cloudscraper.get(`${api}/${post.user}`, { json: true });
-        await lookup.insertOne({
-          version: post.version,
-          service: 'patreon',
-          id: post.user,
-          name: user.data.attributes.vanity || user.data.attributes.full_name
-        });
+        cloudscraper.get(`${api}/${post.user}`, { json: true })
+          .then(user => {
+            lookup.insertOne({
+              version: post.version,
+              service: 'patreon',
+              id: post.user,
+              name: user.data.attributes.vanity || user.data.attributes.full_name
+            });
+          })
+          .catch(() => {})
       }
     }
 
