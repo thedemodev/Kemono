@@ -170,7 +170,7 @@ async function processFanbox(url, key) {
   })
 
   if (data.body.nextUrl) {
-    processFanbox(postData.nextUrl, key)
+    processFanbox(data.body.nextUrl, key)
   }
 }
 
