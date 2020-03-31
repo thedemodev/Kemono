@@ -33,8 +33,8 @@ let fileRequestOptions = (key) => {
 async function scraper(key) {
   parentPort.postMessage('fanbox scraper fired!');
   let fanboxIndex = await request.get('https://fanbox.pixiv.net/api/plan.listSupporting', requestOptions(key));
-  Promise.mapSeries(fanboxIndex.body, async(artist) => {
-    await processFanbox(`https://fanbox.pixiv.net/api/post.listCreator?userId=${artist.user.userId}&limit=100`, key)
+  Promise.map(fanboxIndex.body, async(artist) => {
+    processFanbox(`https://fanbox.pixiv.net/api/post.listCreator?userId=${artist.user.userId}&limit=100`, key)
   });
 }
 
