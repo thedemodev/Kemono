@@ -137,7 +137,7 @@ async function processFanbox(url, key) {
               .pipe(fs.createWriteStream(`${process.env.DB_ROOT}/files/fanbox/${post.user.userId}/${post.id}/${randomKey}`))
           })
           postModel.post_file['name'] = `${file.name}.${file.extension}`
-          postModel.post_file['path'] = `${filesLocation}/${post.user.userId}/${post.id}/${file.name}.${image.extension}`
+          postModel.post_file['path'] = `${filesLocation}/${post.user.userId}/${post.id}/${file.name}.${file.extension}`
         } else {
           const operation = retry.operation({
             retries: 10,
