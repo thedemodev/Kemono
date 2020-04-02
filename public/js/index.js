@@ -129,11 +129,17 @@ async function main() {
       const user = await userData.json();
 
       let marthaView = document.getElementById('recent-view');
+      let avatar;
+      if (!user.included) {
+        avatar = user.included[0].attributes.avatar_photo_url;
+      } else {
+        avatar = user.data.attributes.image_url;
+      }
       marthaView.innerHTML += `
         <div class="recent-row">
           <div class="recent-row-container">
             <a href="/user/${user.data.id}">
-              <div class="avatar" style="background-image: url('${user.included[0].attributes.avatar_photo_url}');"></div>
+              <div class="avatar" style="background-image: url('${avatar}');"></div>
             </a>
             <div style="display: inline-block">
               <a class="link-reset" href="/user/${user.data.id}">

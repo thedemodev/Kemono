@@ -73,12 +73,23 @@ async function main() {
   const user = await userData.json();
   document.title = `${user.data.attributes.vanity || user.data.attributes.full_name} | kemono`
   let marthaView = document.getElementById('martha-view');
+  let avatar;
+  let cover;
+  let subtitle = '';
+  if (!user.included) {
+    avatar = user.included[0].attributes.avatar_photo_url;
+    cover = user.included[0].attributes.cover_photo_url;
+    subtitle = user.included[0].attributes.creation_name;
+  } else {
+    avatar = user.data.attributes.image_url;
+    cover = user.data.attributes.image_ur;
+  }
   marthaView.innerHTML += `
     <div 
       class="user-header-view" 
-      style="background: url('${user.included[0].attributes.cover_photo_url}'); background-size: 100% auto; background-position: center;"
+      style="background: url('${cover}'); background-size: 100% auto; background-position: center;"
     >
-      <div class="user-header-avatar" style="background-image: url('${user.included[0].attributes.avatar_photo_url}');"></div>
+      <div class="user-header-avatar" style="background-image: url('${avatar}');"></div>
       <div class="user-header-info">
         <div class="user-header-info-top">
           <h1>${user.data.attributes.vanity || user.data.attributes.full_name}</h1>
@@ -86,7 +97,7 @@ async function main() {
             <div class="user-header-info-patreon"></div>
           </a>
         </div>
-        <p>${user.included[0].attributes.creation_name}</p>
+        <p>${subtitle}</p>
       </div>
     </div>
   `
