@@ -11,7 +11,7 @@ async function indexer() {
     .project({ version: 1, user: 1 })
     .toArray();
   Promise.mapSeries(postsData, async(post) => {
-    let indexExists = await lookup.findOne({id: post.user});
+    let indexExists = await lookup.findOne({id: post.user, service: post.service});
     if (indexExists) return;
 
     switch (post.service) {
